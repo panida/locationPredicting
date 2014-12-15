@@ -13,7 +13,9 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	return View::make('PersonView');
 });
 
+
 Route::get('/testUploadFile/{personId}', 'PersonController@importLocationLog');
+
