@@ -23,7 +23,7 @@ html, body, #map-canvas {
   z-index: 5;
   background-color: transparent;
 }
-#leftPanel {
+#predictPanel {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -37,10 +37,23 @@ html, body, #map-canvas {
   top: 20px;
   left: 20px;
   right: 100%;
-  
-  height: 210px;
+  height: 300px;
   z-index: 5;
   background-color: #fff;
+}
+
+#sendNotiPanel {
+  position: absolute;
+  top: 100px;
+  right: 50px;
+  height: 400px;
+  z-index: 5;
+  background-color: #fff;
+}
+
+#selectedUsersPanel {
+  height: 140px;
+  overflow-y: auto;
 }
 
 .icon {

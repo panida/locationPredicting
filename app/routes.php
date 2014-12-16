@@ -13,8 +13,9 @@
 
 Route::get('/', function()
 {
-	return View::make('PersonView');
+	return View::make('OverallView');
 });
+
 
 Route::get('/{personId}','PersonController@showInfo');
 
