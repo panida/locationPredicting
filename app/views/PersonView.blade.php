@@ -15,7 +15,7 @@
  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDn7BL_KVNfQo3SlE7QCvRZ3xz84CB2T3U">
  </script>
  <script type="text/javascript">
- var berlin = new google.maps.LatLng(52.520816, 13.410186);
+ var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
 
  var neighborhoods = [
  new google.maps.LatLng(52.511467, 13.447179),
@@ -24,23 +24,25 @@
  new google.maps.LatLng(52.517683, 13.394393)
  ];
 
- var contents = [];
+ var contents = new Array();
+ var predictedLocationClient = new Array();
+ var locationLogClient = new Array();
 
- for (i = 0; i < 24; i++) {
-  contents[i] = "2014/11/01."+i+":24:50";
-}
+  
 
 var markers = [];
 // var bounceMarker = null;
 var iterator = 0;
 var infowindow = null;
 var map;
-var showPredictedLocation = true;
+var showPredictedLocation = false;
 
 function initialize() {
+  prepareData();
+  contents = predictedLocationClient;
   var mapOptions = {
     zoom: 12,
-    center: berlin,
+    center: tokyo,
     mapTypeControl: true,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -62,9 +64,25 @@ function initialize() {
     }
   }
 
-
+  
   map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
+  swap();
+  document.getElementById('predictPanel').hidden=false; 
+  document.getElementById('addPanel').hidden=true; 
+  drop();
+}
+
+function prepareData(){
+  @foreach($predictedLocation as $location)
+      var temp = { 'date':'{{$location->dateTime}}', 'latitude':{{$location->latitude}}, 'longitude':{{$location->longitude}} };
+      predictedLocationClient.push(temp);
+  @endforeach
+
+  @foreach($locationLog as $location)
+      var temp = { 'date':'{{$location->dateTime}}', 'latitude':{{$location->latitude}}, 'longitude':{{$location->longitude}} };
+      locationLogClient.push(temp);
+  @endforeach
 }
 
 function drop(){
@@ -73,11 +91,6 @@ function drop(){
       addMarker();
     }, i * 200);
   }
-}
-function search() {
-  document.getElementById('predictPanel').hidden=false; 
-  document.getElementById('addPanel').hidden=true; 
-  drop();
 }
 
 function addMarker() {
@@ -125,16 +138,31 @@ function clearOverlays() {
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
+function prepareContentHTML(){
+  var text = '<tbody>';
+  for(var i=0 ; i<contents.length ; i++) {
+    text += '<tr>';
+    text += '<td onclick="panToMarker('+i+')">';
+    text += ''+contents[i].date+'</br>'+contents[i].latitude+', '+contents[i].longitude+'</td>';
+    text += '</tr>';
+  }
+  text += '</tbody>';
+  return text;
+}
 
 function swap(){
 
   if(showPredictedLocation){
     showPredictedLocation = false;
     document.getElementById('panelTitle').innerHTML = "Location Log";
+    contents = locationLogClient;
   }else{
     showPredictedLocation = true;
+    contents = predictedLocationClient;
     document.getElementById('panelTitle').innerHTML = "Predicted Location";
   }
+  var resultHTML = prepareContentHTML();
+  document.getElementById('locationContents').innerHTML = resultHTML;
 }
 
 function addData(){
@@ -156,7 +184,7 @@ function delUser(){
     <div class="input-group">
       <input type="text" class="form-control" placeholder="Username">
       <span class="input-group-btn">
-        <button class="btn btn-primary" type="button" id="drop" onclick="search()"><span class="glyphicon glyphicon-search"></span></button>
+        <button class="btn btn-primary" type="button" id="drop"><span class="glyphicon glyphicon-search"></span></button>
       </span>
     </div><!-- /input-group -->
   </div>
@@ -175,14 +203,7 @@ function delUser(){
   </div>
 </div><!-- /.row -->
 <h4 id="panelTitle">Predicted Location</h4>
-<table class="table table-hover">
-  <tbody>
-    @for ($i = 0; $i < 24; $i++)
-    <tr>
-      <td onclick="panToMarker({{$i}})">2014/11/01.{{ $i }}:24:50 </td>
-    </tr>
-    @endfor
-  </tbody>
+<table class="table table-hover" id="locationContents">
 </table>
 </div><!--/predictPanel -->
 
