@@ -164,7 +164,7 @@ function delUser(){
   <div id="predictPanel" class="col-sm-4 col-md-2" hidden="true">
     <div class="row">
       <div class="col-sm-6">
-       <h3>User 1</h3>
+       <h3>{{$person->name}}</h3>
      </div>
      <div class="col-sm-6">
       <h3>
@@ -189,7 +189,7 @@ function delUser(){
 <div id="addPanel" class="col-sm-4 col-md-2" hidden="true">
   <div class="row">
     <div class="col-sm-6">
-     <h3>User 1</h3>
+     <h3>{{$person->name}}</h3>
    </div>
  </div>
  <h4 id="panelTitle">Add Location Log</h4>

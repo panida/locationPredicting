@@ -1,8 +1,8 @@
 <?php
 class LocationLog extends Eloquent{
-	protected $table = 'LocationLog';
-	public $timestamps = flase;
-	public $errors;
+	protected $table = 'locationLogs';
+	public $timestamps = false;
+	
 
 	public function person(){
 		return $this->belongsTo('Person','personId','id');
@@ -21,7 +21,8 @@ class LocationLog extends Eloquent{
 					'longitude' => $elements[2]
 					);
 				array_push($locations, $logs);
-				storeLocation($logs);
+				
+				LocationLog::storeLocation($logs, $personId);
 			}
 			
 		}
@@ -29,12 +30,18 @@ class LocationLog extends Eloquent{
 		return $locations;
 	}
 
-	public static storeLocation($logs){
+	public static function storeLocation($logs, $personId){
 		$location = new LocationLog;
 		$location->latitude = $logs['latitude'];
 		$location->longitude = $logs['longitude'];
-		$location->dateTime = new 
+		$location->dateTime = Carbon::createFromFormat('Y/m/d.H:i:s', $logs['date']);
+		$location->personId = $personId;
+		$location->save();
+		return $location->id;
 	}
 
-
+	public static function getLocationLogByPerson($personId){
+		return DB::table('locationLogs')->where('personId', $personId)->orderBy('dateTime','desc')->get();
+	}
 }
+?>
