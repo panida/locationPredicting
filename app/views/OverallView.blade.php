@@ -18,13 +18,6 @@
  <script type="text/javascript">
  var berlin = new google.maps.LatLng(52.520816, 13.410186);
 
- var neighborhoods = [
- new google.maps.LatLng(52.511467, 13.447179),
- new google.maps.LatLng(52.549061, 13.422975),
- new google.maps.LatLng(52.497622, 13.396110),
- new google.maps.LatLng(52.517683, 13.394393)
- ];
-
  var users=[];
  var user=0;
  var dateTime = [];
@@ -43,6 +36,8 @@ var showPredictedLocation = true;
 var sendNotification = false;
 var dateTime=[];
 var userNumber=2;
+var searchLocation=true;
+
 function initialize() {
   for(i=0;i<userNumber;i++){
     users.push({
@@ -84,7 +79,7 @@ function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
   var input = /** @type {HTMLInputElement} */(
-    document.getElementById('search'));
+    document.getElementById('inputSearchLocation'));
   var autocomplete = new google.maps.places.Autocomplete(input);
   autocomplete.bindTo('bounds', map);
   autocomplete.setTypes([]);
@@ -148,18 +143,23 @@ function drop(){
   }
 }
 function search() {
-  document.getElementById('predictPanel').hidden=false; 
-  document.getElementById('addPanel').hidden=true; 
-  document.getElementById('btnSendNoti').hidden=true; 
-  document.getElementById('sendNotiPanel').hidden=true; 
-  rectangle.setMap(null); 
-  sendNotification=false;
-  clearMarkers();
-  markers=[];
-  for(var i=0;i<userNumber;i++){
-    markers.push([]);
+  if(searchLocation){
+    document.getElementById('predictPanel').hidden=false; 
+    document.getElementById('addPanel').hidden=true; 
+    document.getElementById('btnSendNoti').hidden=true; 
+    document.getElementById('sendNotiPanel').hidden=true; 
+    rectangle.setMap(null); 
+    sendNotification=false;
+    clearMarkers();
+    markers=[];
+    for(var i=0;i<userNumber;i++){
+      markers.push([]);
+    }
+    drop();  
+  }else{
+
   }
-  drop();
+  
 }
 
 function addMarker() {
@@ -255,6 +255,20 @@ function delUser(){
 
 }
 
+function switchSearch(){
+  if(searchLocation){
+    searchLocation=false;
+    document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-user");
+    document.getElementById('searchLocation').hidden=true;
+    document.getElementById('searchUser').hidden=false;
+    
+  }else{
+    searchLocation=true;
+    document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-globe");
+    document.getElementById('searchLocation').hidden=false;
+    document.getElementById('searchUser').hidden=true;
+  }
+}
 function sendNoti(){
   if(sendNotification){
     rectangle.setMap(null); 
@@ -285,27 +299,34 @@ function sendNoti(){
   sendNotification = true;
 }
 }
-// $(function () {
-//   $('[data-toggle="tooltip"]').tooltip()
-// })
+
 </script>
 </head>
 <body>
   <div id="searchPanel" class="row">
     <div class="col-sm-2">
-      <a href="{{ URL::to('/person') }}" class="btn btn-default" type="button" id="drop"><span class="glyphicon glyphicon-user"></span></a>
+      <button class="btn btn-default" type="button" onclick="switchSearch()"><span id="searchIcon" class="glyphicon glyphicon-globe"></span></button>
     </div>
-    <div class="input-group col-sm-10">
-      <input id="search" type="text" class="form-control" placeholder="Enter a location">
-      <span class="input-group-btn">
-        <button class="btn btn-primary" type="button" id="drop" onclick="search()"><span class="glyphicon glyphicon-search"></span></button>
-      </span>
-    </div><!-- /input-group -->
-    
+    <div class="col-sm-10" id="searchUser" hidden="true">
+
+      <div class="input-group">
+        <input id="inputSearchUser" type="text" class="form-control" placeholder="Enter a username">
+        <span class="input-group-btn">
+          <a href="{{ URL::to('/0') }}" class="btn btn-primary" type="button" id="btnSearchUser" onclick="searchUser()"><span class="glyphicon glyphicon-search"></span></a>
+        </span>
+      </div><!-- /input-group -->
+    </div>
+    <div class="col-sm-10" id="searchLocation">
+      <div class="input-group">
+        <input id="inputSearchLocation" type="text" class="form-control" placeholder="Enter a location">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="button" id="btnSearchLocation" onclick="searchLocation()"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+      </div><!-- /input-group -->
+    </div>
   </div>
 
   <div id="predictPanel" class="col-sm-4 col-md-2">
-    <!--    <h3>2 Users  <button type="button" class="icon" onclick="addUser()" data-toggle="tooltip" data-placement="top" title="Add new user"><span class="glyphicon glyphicon-plus-sign"></span></button></h3> -->
     <div class="row">
       <div class="col-sm-8">
        <h3>2 Users</h3>
@@ -346,7 +367,7 @@ function sendNoti(){
 </div>
 <hr>
 <button type="submit" class="btn btn-primary">Add</button>
-<button class="btn btn-default" onclick="search()">Cancel</button>
+<button class="btn btn-default" onclick="cancel()">Cancel</button>
 <!-- </form> -->
 </div><!--/addPanel -->
 
@@ -364,7 +385,6 @@ function sendNoti(){
   </div>
   <hr>
   <button type="submit" class="btn btn-primary">Send</button>
-  <button class="btn btn-default" onclick="search()">Cancel</button>
   <!-- </form> -->
 </div><!--/addPanel -->
 

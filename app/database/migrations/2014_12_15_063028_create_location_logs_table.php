@@ -18,7 +18,6 @@ class CreateLocationLogsTable extends Migration {
 			$table->double('latitude');
 			$table->double('longitude');
 			$table->dateTime('dateTime');
-			$table->double('hour');
 			$table->integer('personId');
 		});
 	}

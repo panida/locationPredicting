@@ -154,7 +154,7 @@ function delUser(){
 
   <div id="searchPanel" class="row">
      <div class="col-sm-2">
-    <a href="{{ URL::to('/') }}" class="btn btn-default" type="button" id="drop"><span class="glyphicon glyphicon-globe"></span></a>
+    <a href="{{ URL::to('/') }}" class="btn btn-default" type="button" id="drop"><span class="glyphicon glyphicon-user"></span></a>
     </div>
     <div class="input-group col-sm-10">
       <input type="text" class="form-control" placeholder="Enter a username">
@@ -167,7 +167,7 @@ function delUser(){
   <div id="leftPanel" class="col-sm-4 col-md-2" hidden="true">
     <div class="row">
       <div class="col-sm-6">
-       <h3>User 1</h3>
+       <h3>{{$person->name}}</h3>
      </div>
      <div class="col-sm-6">
       <h3>
@@ -206,7 +206,7 @@ function delUser(){
 <div id="addPanel" class="col-sm-4 col-md-2" hidden="true">
   <div class="row">
     <div class="col-sm-6">
-     <h3>User 1</h3>
+     <h3>{{$person->name}}</h3>
    </div>
  </div>
  <h4 id="panelTitle">Add Location Log</h4>

@@ -3,9 +3,14 @@
 	"description": "The Laravel Framework.",
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
-	"type": "project",
 	"require": {
-		"laravel/framework": "4.2.*"
+		"laravel/framework": "4.2.*",
+		"zizaco/confide": "~4.0@dev",
+		"twitter/bootstrap": "*",
+		"way/generators": "~2.0",
+		"guzzlehttp/guzzle": "~4.0",
+		"nesbot/Carbon": "*",
+		"pda/pheanstalk": "~2.0"
 	},
 	"autoload": {
 		"classmap": [
