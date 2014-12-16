@@ -357,6 +357,21 @@ function sendNoti(){
  <h3>Add New User</h3>
  <hr>
  <!-- <form role="form"> -->
+ {{ Form::open(array('url' => 'addUser','files'=>true)) }}
+  <div class="form-group">
+  {{Form::label('username','Username')}}
+  {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Username'))}}
+</div>
+<div class="form-group">
+   {{Form::label('file','Location log')}}
+   {{Form::file('file')}}
+</div>
+<hr>
+{{Form::submit('Add', array('class' => 'btn btn-primary'))}}
+<a type="button" class="btn btn-default" href="{{ URL::previous()}}">Cancel</a>
+{{Form::close()}}
+
+<!-- 
  <div class="form-group">
   <label for="inputUsername">Username</label>
   <input type="text" id="inputUsername" class="form-control" placeholder="Username">
@@ -367,7 +382,7 @@ function sendNoti(){
 </div>
 <hr>
 <button type="submit" class="btn btn-primary">Add</button>
-<button class="btn btn-default" onclick="cancel()">Cancel</button>
+<button class="btn btn-default" onclick="cancel()">Cancel</button> -->
 <!-- </form> -->
 </div><!--/addPanel -->
 
