@@ -17,13 +17,6 @@
  <script type="text/javascript">
  var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
 
- var neighborhoods = [
- new google.maps.LatLng(52.511467, 13.447179),
- new google.maps.LatLng(52.549061, 13.422975),
- new google.maps.LatLng(52.497622, 13.396110),
- new google.maps.LatLng(52.517683, 13.394393)
- ];
-
  var contents = new Array();
  var predictedLocationClient = new Array();
  var locationLogClient = new Array();
@@ -32,7 +25,6 @@
 
  var markers = [];
 // var bounceMarker = null;
-var iterator = 0;
 var infowindow = null;
 var map;
 var showPredictedLocation = false;
@@ -63,14 +55,12 @@ function initialize() {
 			position: google.maps.ControlPosition.RIGHT_TOP
 		}
 	}
-
-	
-	map = new google.maps.Map(document.getElementById('map-canvas'),
-		mapOptions);
 	swap();
 	document.getElementById('leftPanel').hidden=false; 
 	document.getElementById('addPanel').hidden=true; 
-	drop();
+	map = new google.maps.Map(document.getElementById('map-canvas'),
+		mapOptions);
+	
 }
 
 function prepareData(){
@@ -86,26 +76,29 @@ function prepareData(){
 }
 
 function drop(){
-	for (var i = 0; i < neighborhoods.length; i++) {
-		addMarker();
+	for (var i = 0; i < contents.length; i++) {
+
+		addMarker(i);
 	}
 }
 
 
-function addMarker() {
+function addMarker(iterator) {
+	var tlocation = new google.maps.LatLng(contents[iterator].latitude, contents[iterator].longitude);
+	
+	
 	markers.push(new google.maps.Marker({
-		position: neighborhoods[iterator],
+		position: tlocation,
 		map: map,
 		draggable: false,
 		animation: google.maps.Animation.DROP
 	}));
-	var content = contents[iterator];
+	var content = location;
 	var marker = markers[iterator];
 	google.maps.event.addListener(marker, 'click', function() {
 		setInfoWindow(content);
 		infowindow.open(map,marker);
 	});
-	iterator++;
 }
 function setInfoWindow(content){
 	if (infowindow) {
@@ -113,7 +106,7 @@ function setInfoWindow(content){
 	}
 	infowindow = new google.maps.InfoWindow({
 		content: '<div>'+
-		'<h4 id="heading">'+content+'</h4>'+
+		'<h5 id="heading">'+content+'</h4>'+
 		'</div>'
 	});   
 }
@@ -124,9 +117,9 @@ function panToMarker(i) {
 	// }
 	// markers[i].setAnimation(google.maps.Animation.BOUNCE);
 	// bounceMarker = markers[i];
-	setInfoWindow(contents[i]);
+	setInfoWindow(contents[i].latitude+', '+contents[i].longitude);
 	infowindow.open(map,markers[i]);
-	map.panToBounds(markers[i].getPosition());
+	map.panTo(markers[i].getPosition());
 }
 function clearOverlays() {
 	for (var i = 0; i < markers.length; i++ ) {
@@ -164,6 +157,7 @@ function swap(){
 	}
 	var resultHTML = prepareContentHTML();
 	document.getElementById('locationContents').innerHTML = resultHTML;
+	drop();
 }
 
 function addData(){
