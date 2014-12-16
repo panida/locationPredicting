@@ -20,5 +20,5 @@ Route::get('/', function()
 Route::get('/{personId}','PersonController@showInfo');
 
 
-Route::get('/testUploadFile/{personId}', 'PersonController@importLocationLog');
 
+Route::post('/upload/{personId}', 'PersonController@importLocationLog');
