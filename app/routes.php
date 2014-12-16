@@ -13,6 +13,9 @@
 
 Route::get('/', function()
 {
+	return View::make('OverallView');
+});
+Route::get('/person', function()
+{
 	return View::make('PersonView');
 });
-

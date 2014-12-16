@@ -69,13 +69,11 @@ function initialize() {
 
 function drop(){
   for (var i = 0; i < neighborhoods.length; i++) {
-    setTimeout(function() {
       addMarker();
-    }, i * 200);
   }
 }
 function search() {
-  document.getElementById('predictPanel').hidden=false; 
+  document.getElementById('leftPanel').hidden=false; 
   document.getElementById('addPanel').hidden=true; 
   drop();
 }
@@ -130,20 +128,22 @@ function swap(){
 
   if(showPredictedLocation){
     showPredictedLocation = false;
-    document.getElementById('panelTitle').innerHTML = "Location Log";
+    document.getElementById('predictTable').hidden=true;
+    document.getElementById('logTable').hidden=false;
   }else{
     showPredictedLocation = true;
-    document.getElementById('panelTitle').innerHTML = "Predicted Location";
+    document.getElementById('predictTable').hidden=false;
+    document.getElementById('logTable').hidden=true;
   }
 }
 
 function addData(){
-  document.getElementById('predictPanel').hidden=true;  
+  document.getElementById('leftPanel').hidden=true;  
   document.getElementById('addPanel').hidden=false;
 }
 
 function delUser(){
-  
+
 }
 // $(function () {
 //   $('[data-toggle="tooltip"]').tooltip()
@@ -152,16 +152,19 @@ function delUser(){
 </head>
 <body>
 
-  <div id="searchPanel">
-    <div class="input-group">
-      <input type="text" class="form-control" placeholder="Username">
+  <div id="searchPanel" class="row">
+     <div class="col-sm-2">
+    <a href="{{ URL::to('/') }}" class="btn btn-default" type="button" id="drop"><span class="glyphicon glyphicon-globe"></span></a>
+    </div>
+    <div class="input-group col-sm-10">
+      <input type="text" class="form-control" placeholder="Enter a username">
       <span class="input-group-btn">
         <button class="btn btn-primary" type="button" id="drop" onclick="search()"><span class="glyphicon glyphicon-search"></span></button>
       </span>
     </div><!-- /input-group -->
   </div>
 
-  <div id="predictPanel" class="col-sm-4 col-md-2" hidden="true">
+  <div id="leftPanel" class="col-sm-4 col-md-2" hidden="true">
     <div class="row">
       <div class="col-sm-6">
        <h3>User 1</h3>
@@ -171,20 +174,34 @@ function delUser(){
        <button type="button" class="icon" onclick="swap()" data-toggle="tooltip" data-placement="right" title="Switch to Location Log"><span class="glyphicon glyphicon-retweet"></span></button>
        <button type="button" class="icon" onclick="addData()" data-toggle="tooltip" data-placement="top" title="Add more location information"><span class="glyphicon glyphicon-plus"></span></button>
        <button type="button" class="icon" data-toggle="modal" data-target="#confirm-delete" data-placement="top" title="Delete this user's location information"><span class="glyphicon glyphicon-trash"></span></button>
-    </h3>
-  </div>
-</div><!-- /.row -->
-<h4 id="panelTitle">Predicted Location</h4>
-<table class="table table-hover">
-  <tbody>
-    @for ($i = 0; $i < 24; $i++)
-    <tr>
-      <td onclick="panToMarker({{$i}})">2014/11/01.{{ $i }}:24:50 </td>
-    </tr>
-    @endfor
-  </tbody>
-</table>
-</div><!--/predictPanel -->
+     </h3>
+   </div>
+ </div><!-- /.row -->
+ <div id="predictTable">
+  <h4 id="panelTitle">Predicted Location</h4>
+  <table class="table table-hover">
+    <tbody>
+      @for ($i = 0; $i < 24; $i++)
+      <tr>
+        <td onclick="panToMarker({{$i}})">2014/11/01.{{ $i }}:24:50 </td>
+      </tr>
+      @endfor
+    </tbody>
+  </table>
+</div>
+<div id="logTable" hidden="true">
+  <h4 id="panelTitle">Location Log</h4>
+  <table class="table table-hover">
+    <tbody>
+      @for ($i = 0; $i < 24; $i++)
+      <tr>
+        <td onclick="panToMarker({{$i}})">2014/11/01.{{ $i }}:24:50 </td>
+      </tr>
+      @endfor
+    </tbody>
+  </table>
+</div>
+</div><!--/leftPanel -->
 
 <div id="addPanel" class="col-sm-4 col-md-2" hidden="true">
   <div class="row">
@@ -231,7 +248,7 @@ function delUser(){
 <!-- {{HTML::script('js/bootstrap.min.js');}} -->
  <!-- {{HTML::script('js/jquery-1.11.1.min.js');}}
  {{HTML::script('js/jquery.js');}} -->
-<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
+ <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+ <script type="text/javascript" src="js/bootstrap.min.js"></script>
 </body>
 </html>
