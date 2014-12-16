@@ -4,5 +4,4 @@ class Person extends Eloquent{
 	public $timestamps = false;
 	protected $fillable = array('personId','name');
 
-
 }
