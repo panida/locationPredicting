@@ -23,7 +23,8 @@ class PersonController extends Controller {
 	public function showInfo($personId){
 		$person = DB::table('person')->where('personId', $personId)->first();
 		$locationLog = LocationLog::getLocationLogByPerson($person->id);
-		$predictedLocation = PredictedLocation::getPredictedLocationByPerson($person->id);
+		$lastestDate = $locationLog[count($locationLog)-1]->dateTime;
+		$predictedLocation = PredictedLocation::getPredictedLocationByPerson($person->id, $lastestDate);
 		return View::make('PersonView',array('person'=>$person,'locationLog'=>$locationLog, 'predictedLocation'=>$predictedLocation));
 	}
 	public function deleteUser(){

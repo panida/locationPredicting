@@ -10,7 +10,7 @@ class PredictedLocation extends Eloquent{
 		return $this->belongsTo('Person','personId','id');
 	}
 
-	public static function getPredictedLocationByPerson($personId){
+	public static function getPredictedLocationByPerson($personId,$currentDate){
 		return DB::table('predictedLocation')->where('personId', '=', $personId)->where('dateTime','>=', new DateTime($currentDate))->orderBy('dateTime')->get();
 	}
 
