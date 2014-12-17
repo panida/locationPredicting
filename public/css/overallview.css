@@ -46,13 +46,13 @@ html, body, #map-canvas {
   position: absolute;
   top: 100px;
   right: 50px;
-  height: 400px;
+  height: 310px;
   z-index: 5;
   background-color: #fff;
 }
 
 #selectedUsersPanel {
-  height: 140px;
+  height: 70px;
   overflow-y: auto;
 }
 
