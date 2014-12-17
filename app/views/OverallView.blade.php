@@ -23,7 +23,6 @@
 
  var users=new Array();
  var user=0;
- var dateTime = [];
 
  var markers = [];
  var specificMarkers =[];
@@ -33,11 +32,13 @@ var infowindow = null;
 var map;
 var showPredictedLocation = true;
 var sendNotification = false;
-var dateTime=[];
+ var dateTime;
 var userNumber=0;
 var searchLocation=true;
 var rectangle;
+
 function initialize() {
+  dateTime = new Date();
   prepareData();
   contents = predictedLocationClient;
   
@@ -146,7 +147,6 @@ function showNewRect(event) {
 
 }
 function drop(){
-  console.log("drop");
   for(var i=0;i<users.length;i++){
     user=i;
     for (var j = 0; j < predictedLocationClient[i].length; j++) {
@@ -154,11 +154,10 @@ function drop(){
     }
     iterator=0;
   }
-   map.panTo(markers[0][0].getPosition());
+  map.panTo(markers[0][0].getPosition());
 }
 
 function showMarkers(){
-  console.log("all");
   document.getElementById('predictPanel').hidden=false; 
   document.getElementById('addPanel').hidden=true; 
   document.getElementById('btnSendNoti').hidden=true; 
@@ -258,22 +257,31 @@ function clearMarkers() {
 //   }
 // }
 function prepareContentHTML(){
+  dateTime = new Date();
+  var time=dateTime.getTime();
   var text = '<tbody>'+
   '<tr>'+
   '<td onclick="showMarkers()">All</td>'+
   '</tr>';
-  console.log(contents[0].length)
-  for(var i=0;i<contents[0].length;i++){
+  console.log(contents[0].length);
+  for(var i=0;i<24;i++){
    text += '<tr>';
    text += '<td onclick="showSpecificMarkers('+i+')">';
-   text += ''+contents[0][i].date+'</td>';
+   text += ''+dateTime.getFullYear()+'-'+dateTime.getMonth()+'-'+dateTime.getDate();
+   text += ' '+addZero(dateTime.getHours())+':'+addZero(dateTime.getMinutes())+':'+addZero(dateTime.getSeconds())+'</td>';
    text += '</tr>';
+   dateTime.setHours(dateTime.getHours()+1);
  }
 
  text += '</tbody>';
  return text;
 }
-
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
 function addUser(){
   document.getElementById('predictPanel').hidden=true;  
   document.getElementById('addPanel').hidden=false;
@@ -351,7 +359,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
       <div class="input-group">
         <input id="inputSearchLocation" type="text" class="form-control" placeholder="Enter a location">
         <span class="input-group-btn">
-          <button class="btn btn-primary" type="button" id="btnSearchLocation" onclick="searchLocation()"><span class="glyphicon glyphicon-search"></span></button>
+          <button class="btn btn-primary" type="button" id="btnSearchLocation"><span class="glyphicon glyphicon-search"></span></button>
         </span>
       </div><!-- /input-group -->
     </div>
