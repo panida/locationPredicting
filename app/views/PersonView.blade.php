@@ -82,6 +82,10 @@ function drop(){
 	}
 }
 
+function cancelUpload(){
+	document.getElementById('leftPanel').hidden=false; 
+	document.getElementById('addPanel').hidden=true; 
+}
 
 function addMarker(iterator) {
 	var tlocation = new google.maps.LatLng(contents[iterator].latitude, contents[iterator].longitude);
@@ -211,12 +215,14 @@ function delUser(){
 		</div>
 		<h4 id="panelTitle">Add Location Log</h4>
 		<!-- <form role="form"> -->
+		{{ Form::open(array('url' => 'upload/'.$person->id, 'method' => 'post','files' => true)) }}
 		<div class="form-group">
 			<label for="exampleInputFile">File input</label>
-			<input type="file" id="exampleInputFile">
+			{{Form::file('inputFile');}}
 		</div>
-		<button type="submit" class="btn btn-primary">Add</button>
+		{{Form::submit('add',array('class'=>'btn btn-primary'))}}
 		<button class="btn btn-default" onclick="search()">Cancel</button>
+		{{Form::close()}}
 		<!-- </form> -->
 	</div><!--/addPanel -->
 

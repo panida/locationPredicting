@@ -21,10 +21,8 @@ class LocationLog extends Eloquent{
 					'longitude' => $elements[2]
 					);
 				array_push($locations, $logs);
-				
 				LocationLog::storeLocation($logs, $personId);
 			}
-			
 		}
 		fclose($file);
 		return $locations;

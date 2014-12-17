@@ -3,19 +3,17 @@
 class PersonController extends Controller {
 
 	public function importLocationLog($personId){
-		//$file_max = ini_get('upload_max_filesize');
-		//try{
-			// $file = Input::file('locationList');
-			// $filename = $file->getClientOriginalName();
-			// Input::file('locationList')->move('img/upload/', $filename);
-			// $locationList = LocationLog::extractLocationListFromFile("upload/".$filename);
-			$person = new Person;
-			$locationList = LocationLog::extractLocationListFromFile("upload/location1.txt", $personId);
-			return Redirect::to('/');		
-		// }
-		// catch(Exception $e){
-		// 	return Redirect::to('blankpage');
-		// }
+		$file_max = ini_get('upload_max_filesize');
+		try{
+			$file = Input::file('inputFile');
+			$filename = $file->getClientOriginalName();
+			Input::file('inputFile')->move('upload/', $personId.'_'.$filename);
+			$locationList = LocationLog::extractLocationListFromFile("upload/".$personId.'_'.$filename,$personId);
+			return Redirect::to('/'.$personId);		
+		}
+		catch(Exception $e){
+			return Redirect::to('/'.$personId);
+		}
 	}
 
 	public function showInfo($personId){
