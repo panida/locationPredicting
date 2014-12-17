@@ -14,6 +14,10 @@ class PredictedLocation extends Eloquent{
 		return DB::table('predictedLocation')->where('personId', '=', $personId)->where('dateTime','>=', new DateTime($currentDate))->orderBy('dateTime')->get();
 	}
 
+	public static function getPredictedLocationByPerson2($personId){
+		return DB::table('predictedLocation')->where('personId', '=', $personId)->orderBy('dateTime')->get();
+	}
+
 	public static function storePredictedData($predictedLocationList, $personId, $lastestDate){
 		var_dump($lastestDate);
 		$tempDateTime = Carbon::createFromFormat('Y-m-d H:m:i', $lastestDate);

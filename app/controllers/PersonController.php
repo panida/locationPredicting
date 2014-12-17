@@ -23,7 +23,7 @@ class PersonController extends Controller {
 	}
 
 	public function showInfo($personId){
-		$person = DB::table('person')->where('personId', $personId)->first();
+		$person = DB::table('person')->where('id', $personId)->first();
 		$locationLog = LocationLog::getLocationLogByPerson($person->id);
 		$predictedLocation=array();
 		if(count($locationLog)>0){
