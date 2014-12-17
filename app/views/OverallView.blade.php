@@ -180,20 +180,23 @@ function showMarkers(){
 }
 
 function addMarker() {
-  var tlocation = new google.maps.LatLng(contents[user][iterator].latitude, contents[user][iterator].longitude);
-  markers[user].push(new google.maps.Marker({
+  if(contents[user][iterator]!=null){
+   var tlocation = new google.maps.LatLng(contents[user][iterator].latitude, contents[user][iterator].longitude);
+   markers[user].push(new google.maps.Marker({
     position: tlocation,
     map: map,
     draggable: false,
   }));
-  var content = contents[user][iterator].date;
-  var marker = markers[user][iterator];
-  var username = users[user];
-  google.maps.event.addListener(marker, 'click', function() {
+   var content = contents[user][iterator].date;
+   var marker = markers[user][iterator];
+   var username = users[user];
+   google.maps.event.addListener(marker, 'click', function() {
     setInfoWindow(content,username);
     infowindow.open(map,marker);
   });  
-  iterator++;
+   iterator++;
+ }
+ 
 }
 
 function showSpecificMarkers(row){
@@ -207,7 +210,8 @@ function showSpecificMarkers(row){
 }
 
 function addSpecificMarkers(row){
-  var tlocation = new google.maps.LatLng(contents[user][row].latitude, contents[user][row].longitude);
+  if(contents[user][row]!=null){
+    var tlocation = new google.maps.LatLng(contents[user][row].latitude, contents[user][row].longitude);
   specificMarkers.push(new google.maps.Marker({
     position: tlocation,
     map: map,
@@ -220,6 +224,8 @@ function addSpecificMarkers(row){
     setInfoWindow(content,username);
     infowindow.open(map,marker);
   });  
+  }
+  
 }
 
 function setInfoWindow(content,username){

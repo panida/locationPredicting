@@ -15,7 +15,7 @@ class PredictedLocation extends Eloquent{
 	}
 
 	public static function getPredictedLocationByPerson2($personId){
-		return DB::table('predictedLocation')->where('personId', '=', $personId)->orderBy('dateTime')->get();
+		return DB::table('predictedLocation')->where('personId', $personId)->orderBy('dateTime','desc')->get();
 	}
 
 	public static function storePredictedData($predictedLocationList, $personId, $lastestDate){
