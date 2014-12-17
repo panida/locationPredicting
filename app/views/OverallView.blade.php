@@ -32,7 +32,7 @@ var infowindow = null;
 var map;
 var showPredictedLocation = true;
 var sendNotification = false;
- var dateTime;
+var dateTime;
 var userNumber=0;
 var searchLocation=true;
 var rectangle;
@@ -257,31 +257,38 @@ function clearMarkers() {
 //   }
 // }
 function prepareContentHTML(){
-  dateTime = new Date();
-  var time=dateTime.getTime();
+  // dateTime = new Date();
+  // var time=dateTime.getTime();
   var text = '<tbody>'+
   '<tr>'+
   '<td onclick="showMarkers()">All</td>'+
   '</tr>';
-  console.log(contents[0].length);
-  for(var i=0;i<24;i++){
+ //  console.log(contents[0].length);
+ //  for(var i=0;i<24;i++){
+ //   text += '<tr>';
+ //   text += '<td onclick="showSpecificMarkers('+i+')">';
+ //   text += ''+dateTime.getFullYear()+'-'+dateTime.getMonth()+'-'+dateTime.getDate();
+ //   text += ' '+addZero(dateTime.getHours())+':'+addZero(dateTime.getMinutes())+':'+addZero(dateTime.getSeconds())+'</td>';
+ //   text += '</tr>';
+ //   dateTime.setHours(dateTime.getHours()+1);
+ // }
+
+
+ for(var i=0;i<contents[0].length;i++){
    text += '<tr>';
    text += '<td onclick="showSpecificMarkers('+i+')">';
-   text += ''+dateTime.getFullYear()+'-'+dateTime.getMonth()+'-'+dateTime.getDate();
-   text += ' '+addZero(dateTime.getHours())+':'+addZero(dateTime.getMinutes())+':'+addZero(dateTime.getSeconds())+'</td>';
+   text += ''+contents[0][i].date+'</td>';
    text += '</tr>';
-   dateTime.setHours(dateTime.getHours()+1);
  }
-
  text += '</tbody>';
  return text;
 }
-function addZero(i) {
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
-}
+// function addZero(i) {
+//     if (i < 10) {
+//         i = "0" + i;
+//     }
+//     return i;
+// }
 function addUser(){
   document.getElementById('predictPanel').hidden=true;  
   document.getElementById('addPanel').hidden=false;
