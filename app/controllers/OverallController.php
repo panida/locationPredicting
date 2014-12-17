@@ -36,7 +36,7 @@ class OverallController extends Controller {
 		$username = Input::get('username');
 		$person = DB::table('person')->where('name', $username)->first();
 		if ($person){
-			return Redirect::to('/'.$person->personId);
+			return Redirect::to('/'.$person->id);
 		}
 		else{
 			return Redirect::to('/');
