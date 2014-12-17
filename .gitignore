@@ -2,3 +2,8 @@
 .env.*.php
 .env.php
 /app/config/database.php
+location-1.txt
+public/upload/5_location-3.txt
+public/upload/location-1.txt
+public/upload/location-2.txt
+public/upload/location-3.txt
