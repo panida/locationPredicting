@@ -11,14 +11,15 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('OverallView');
-});
+Route::get('/', 'OverallController@showAllUsers');
 
+Route::post('/addUser', 'OverallController@addUser');
+
+Route::post('/searchUser', 'OverallController@searchUser');
 
 Route::get('/{personId}','PersonController@showInfo');
 
 Route::post('/upload/{personId}', 'PersonController@importLocationLog');
 
-Route::post('/addUser', 'OverallController@addUser');
+Route::post('/deleteUser', 'PersonController@deleteUser');
+

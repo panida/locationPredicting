@@ -77,7 +77,6 @@ function prepareData(){
 
 function drop(){
 	for (var i = 0; i < contents.length; i++) {
-
 		addMarker(i);
 	}
 }
@@ -103,6 +102,7 @@ function addMarker(iterator) {
 		setInfoWindow(content);
 		infowindow.open(map,marker);
 	});
+
 }
 function setInfoWindow(content){
 	if (infowindow) {
@@ -116,12 +116,7 @@ function setInfoWindow(content){
 }
 
 function panToMarker(i) {
-	// if(bounceMarker!=null){
-	//   bounceMarker.setAnimation(null);  
-	// }
-	// markers[i].setAnimation(google.maps.Animation.BOUNCE);
-	// bounceMarker = markers[i];
-	setInfoWindow(contents[i].latitude+', '+contents[i].longitude);
+	setInfoWindow(contents[i].date);
 	infowindow.open(map,markers[i]);
 	map.panTo(markers[i].getPosition());
 }
@@ -139,7 +134,7 @@ function prepareContentHTML(){
 	for(var i=0 ; i<contents.length ; i++) {
 		text += '<tr>';
 		text += '<td onclick="panToMarker('+i+')">';
-		text += ''+contents[i].date+'</br>'+contents[i].latitude+', '+contents[i].longitude+'</td>';
+		text += ''+contents[i].date+'</td>';
 		text += '</tr>';
 	}
 	text += '</tbody>';
@@ -191,7 +186,7 @@ function delUser(){
 		</div><!-- /input-group -->
 	</div>
 
-	<div id="leftPanel" class="col-sm-4 col-md-2" hidden="true">
+	<div id="leftPanel" class="col-sm-4 col-md-2">
 		<div class="row">
 			<div class="col-sm-6">
 				<h3>{{$person->name}}</h3>
@@ -226,7 +221,7 @@ function delUser(){
 			{{Form::file('inputFile');}}
 		</div>
 		{{Form::submit('add',array('class'=>'btn btn-primary'))}}
-		<button class="btn btn-default" onclick="search()">Cancel</button>
+		<a class="btn btn-default" href="{{ URL::previous()}}">Cancel</a>
 		{{Form::close()}}
 		<!-- </form> -->
 	</div><!--/addPanel -->
@@ -250,8 +245,12 @@ function delUser(){
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-danger danger" onclick="delUser()">Yes</button>
+					
+          {{ Form::open(array('url' => '/deleteUser')) }}
+          {{ Form::hidden('id', $person->id) }}
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          {{ Form::submit('Yes',array('class'=>'btn btn-danger'))}}
+          {{ Form::close() }}
 				</div>
 			</div>
 		</div>
