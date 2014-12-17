@@ -161,7 +161,7 @@ Class PredictionAlgorithm{
 	}
 
 	public static function predictNextLocation($current_location, $cluster_list, $location_list) {
-		echo '+++++'.$current_location->parent_cluster_id;
+		//echo '+++++'.$current_location->parent_cluster_id;
 		$current_cluster = $cluster_list[$current_location->parent_cluster_id];
 		$score_of_place = array();
 		for ($i = 0; $i < count($cluster_list); $i=$i+1)
