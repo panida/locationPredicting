@@ -305,7 +305,7 @@ function cancel(){
 
    <div class="modal-footer">
 
-    {{ Form::open(array('url' => '/deleteUser')) }}
+    {{ Form::open(array('url' => '/deleteUser'.$person->id)) }}
     {{ Form::hidden('id', $person->id) }}
     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
     {{ Form::submit('Yes',array('class'=>'btn btn-danger'))}}

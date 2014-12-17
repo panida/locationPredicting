@@ -8,8 +8,8 @@ class PersonController extends Controller {
 			$file = Input::file('inputFile');
 			$filename = $file->getClientOriginalName();
 			Input::file('inputFile')->move('upload/', $personId.'_'.$filename);
-			DB::table('locationLogs')->delete();
-			DB::table('predictedLocation')->delete();
+			//DB::table('locationLogs')->delete();
+			DB::table('predictedLocation')->where('personId', '=', $personId)->delete();
 			
 			$locationList = LocationLog::extractLocationListFromFile("upload/".$personId.'_'.$filename,$personId);
 			$locationLog = LocationLog::getLocationLogByPerson($personId);
@@ -32,8 +32,8 @@ class PersonController extends Controller {
 		}
 		return View::make('PersonView',array('person'=>$person,'locationLog'=>$locationLog, 'predictedLocation'=>$predictedLocation));
 	}
-	public function deleteUser(){
-		$id = Input::get('id');
+	public function deleteUser($id){
+		
 		LocationLog::where('personId', $id)->delete();
 		PredictedLocation::where('personId', $id)->delete();
 		$person = Person::find($id);
