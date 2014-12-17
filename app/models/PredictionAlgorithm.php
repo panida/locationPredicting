@@ -28,6 +28,7 @@ Class PredictionAlgorithm{
 			$temp->lng = $locationLog->longitude;
 			$temp->time = intval(date_format(new DateTime($locationLog->dateTime), 'H'))+(intval(date_format(new DateTime($locationLog->dateTime), 'i'))/60.0);
 			$temp->id = $location_id_counter;
+			$temp->dateTime = new DateTime($locationLog->dateTime);
 			array_push($output, $temp);
 			$location_id_counter = $location_id_counter+1;
 		}
@@ -275,7 +276,7 @@ Class PredictionAlgorithm{
 		// echo '<pre>';
 		// var_dump($cluster_list);
 		// echo '</pre>';
-		PredictionAlgorithm::predictNext24hLocation($location_list[count($location_list) - 2], $cluster_list, $location_list, $predicted_location_list);
+		PredictionAlgorithm::predictNext24hLocation($location_list[0], $cluster_list, $location_list, $predicted_location_list);
 		//var_dump($predicted_location_list);
 		return $predicted_location_list;
 		/// predict next location

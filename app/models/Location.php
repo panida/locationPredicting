@@ -9,5 +9,6 @@ Class Location{
 	public $person_id;
 	public $destination_cluster_id = -1;
 	public $parent_cluster_id = -1;
+	public $dateTime;
 }
 ?>

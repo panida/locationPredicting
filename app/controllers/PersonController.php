@@ -9,11 +9,13 @@ class PersonController extends Controller {
 			$filename = $file->getClientOriginalName();
 			Input::file('inputFile')->move('upload/', $personId.'_'.$filename);
 			DB::table('locationLogs')->delete();
+			DB::table('predictedLocation')->delete();
 			
 			$locationList = LocationLog::extractLocationListFromFile("upload/".$personId.'_'.$filename,$personId);
 			$locationLog = LocationLog::getLocationLogByPerson($personId);
 			$predictedLocationList = PredictionAlgorithm::predict($locationLog);
-			//PredictedLocation::storePredictedData($predictedLocationList);
+			$lastestDate = $locationLog[count($locationLog)-1]->dateTime;
+			PredictedLocation::storePredictedData($predictedLocationList,$personId,$lastestDate);
 			var_dump($predictedLocationList);
 			//return View::make('blank_page');
 			return Redirect::to('/'.$personId);		
@@ -23,8 +25,11 @@ class PersonController extends Controller {
 	public function showInfo($personId){
 		$person = DB::table('person')->where('personId', $personId)->first();
 		$locationLog = LocationLog::getLocationLogByPerson($person->id);
-		$lastestDate = $locationLog[count($locationLog)-1]->dateTime;
-		$predictedLocation = PredictedLocation::getPredictedLocationByPerson($person->id, $lastestDate);
+		$predictedLocation=array();
+		if(count($locationLog)>0){
+			$lastestDate = $locationLog[0]->dateTime;
+			$predictedLocation = PredictedLocation::getPredictedLocationByPerson($person->id, $lastestDate);
+		}
 		return View::make('PersonView',array('person'=>$person,'locationLog'=>$locationLog, 'predictedLocation'=>$predictedLocation));
 	}
 	public function deleteUser(){

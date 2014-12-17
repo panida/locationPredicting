@@ -55,11 +55,11 @@ function initialize() {
 			position: google.maps.ControlPosition.RIGHT_TOP
 		}
 	}
+	
+	map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
 	swap();
 	document.getElementById('leftPanel').hidden=false; 
 	document.getElementById('addPanel').hidden=true; 
-	map = new google.maps.Map(document.getElementById('map-canvas'),
-		mapOptions);
 	
 }
 
@@ -96,7 +96,7 @@ function addMarker(iterator) {
 		draggable: false,
 		animation: google.maps.Animation.DROP
 	}));
-	var content = location;
+	var content = tlocation;
 	var marker = markers[iterator];
 	google.maps.event.addListener(marker, 'click', function() {
 		setInfoWindow(content);
@@ -110,7 +110,7 @@ function setInfoWindow(content){
 	}
 	infowindow = new google.maps.InfoWindow({
 		content: '<div>'+
-		'<h5 id="heading">'+content+'</h4>'+
+		'<h5 id="heading">'+content+'</h5>'+
 		'</div>'
 	});   
 }
@@ -134,7 +134,7 @@ function prepareContentHTML(){
 	for(var i=0 ; i<contents.length ; i++) {
 		text += '<tr>';
 		text += '<td onclick="panToMarker('+i+')">';
-		text += ''+contents[i].date+'</td>';
+		text += ''+contents[i].date+'</br>'+contents[i].latitude+', '+contents[i].longitude+'</td>';
 		text += '</tr>';
 	}
 	text += '</tbody>';
@@ -145,7 +145,6 @@ function swap(){
 
 	if(showPredictedLocation){
 		showPredictedLocation = false;
-
 		document.getElementById('panelTitle').innerHTML = "Location Log";
 		contents = locationLogClient;
 	}else{
@@ -154,8 +153,11 @@ function swap(){
 		document.getElementById('panelTitle').innerHTML = "Predicted Location";
 
 	}
+
 	var resultHTML = prepareContentHTML();
 	document.getElementById('locationContents').innerHTML = resultHTML;
+	clearOverlays();
+	markers = [];
 	drop();
 }
 
