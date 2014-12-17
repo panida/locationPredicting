@@ -17,17 +17,17 @@ class OverallController extends Controller {
 	public function showAllUsers(){
 		$users = DB::table('person')->get();
 		$predictedLocations = array();
-		foreach ($users as $user)
-		{
+		$iterator=0;
+		for($i=0;$i<count($users);$i++){
 			// need to change to real predictedLocation
 			$predictedLocation = array();
-			$tpredictedLocation = LocationLog::getLocationLogByPerson($user->id);
-			for($i=count($tpredictedLocation)-24;$i<count($tpredictedLocation);$i++){
-				array_push($predictedLocation, $tpredictedLocation);	
+			$tpredictedLocation = LocationLog::getLocationLogByPerson($users[$i]->id);
+			for($j=count($tpredictedLocation)-24;$j<count($tpredictedLocation);$j++){
+				array_push($predictedLocation, $tpredictedLocation[$j]);
 			}
 			array_push($predictedLocations, $predictedLocation);
 		}
-		return View::make('OverallView',array('users'=>$users,'predictedLocations'=>$predictedLocation));
+		return View::make('OverallView',array('users'=>$users,'predictedLocations'=>$predictedLocations));
 	}
 
 	public function searchUser(){

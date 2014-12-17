@@ -36,7 +36,7 @@ var sendNotification = false;
 var dateTime=[];
 var userNumber=0;
 var searchLocation=true;
-
+var rectangle;
 function initialize() {
   prepareData();
   contents = predictedLocationClient;
@@ -44,21 +44,6 @@ function initialize() {
   for(var i=0;i<users.length;i++){
     markers.push([]);
   }
-
-  // for(i=0;i<userNumber;i++){
-  //   users.push({
-  //     name: "user"+(i+1),
-  //     locations: [] 
-  //   });
-  //   markers.push([]);
-  // }
-  // var lng =13.44;
-  // for (i=0;i<24;i++) {
-  //   users[0].locations.push(new google.maps.LatLng(52.511467, lng));
-  //   users[1].locations.push(new google.maps.LatLng(52.471467, lng));
-  //   lng+=0.01;
-  //   dateTime.push("2014/11/01."+i+":24:50");
-  // }
   var mapOptions = {
     zoom: 12,
     center: tokyo,
@@ -119,8 +104,6 @@ function initialize() {
   drop();
 }
 
-google.maps.event.addDomListener(window, 'load', initialize);
-
 function prepareData(){
   @foreach($users as $user){
     users.push('{{$user->name}}');
@@ -128,8 +111,10 @@ function prepareData(){
   @endforeach
 
   var iterator=0;
+  
   @foreach($predictedLocations as $locations){
     predictedLocationClient.push([]);
+    
     @foreach($locations as $location){
       var temp = { 'date':'{{$location->dateTime}}', 'latitude':{{$location->latitude}}, 'longitude':{{$location->longitude}} };
       predictedLocationClient[iterator].push(temp);
@@ -161,6 +146,7 @@ function showNewRect(event) {
 
 }
 function drop(){
+  console.log("drop");
   for(var i=0;i<users.length;i++){
     user=i;
     for (var j = 0; j < predictedLocationClient[i].length; j++) {
@@ -168,32 +154,28 @@ function drop(){
     }
     iterator=0;
   }
+   map.panTo(markers[0][0].getPosition());
 }
 
 function showMarkers(){
+  console.log("all");
+  document.getElementById('predictPanel').hidden=false; 
+  document.getElementById('addPanel').hidden=true; 
+  document.getElementById('btnSendNoti').hidden=true; 
+
+  document.getElementById('sendNotiPanel').hidden=true;
+  var resultHTML = prepareContentHTML();
+  document.getElementById('locationContents').innerHTML = resultHTML;
+  if(rectangle){
+    rectangle.setMap(null);   
+  }
+  sendNotification=false;
   clearMarkers();
   markers=[];
   for(var i=0;i<users.length;i++){
     markers.push([]);
   }
   drop();
-}
-
-function search() {
-  if(searchLocation){
-    document.getElementById('predictPanel').hidden=false; 
-    document.getElementById('addPanel').hidden=true; 
-    document.getElementById('btnSendNoti').hidden=true; 
-    document.getElementById('sendNotiPanel').hidden=true; 
-    rectangle.setMap(null); 
-    sendNotification=false;
-    showMarkers();  
-    var resultHTML = prepareContentHTML();
-    document.getElementById('locationContents').innerHTML = resultHTML;
-  }else{
-
-  }
-
 }
 
 function addMarker() {
@@ -265,9 +247,6 @@ function clearMarkers() {
   }
   specificMarkers =[];
 }
-function showMarkers() {
-  setAllMap(map);
-}
 
 // function swap(){
 //   if(showPredictedLocation){
@@ -283,7 +262,7 @@ function prepareContentHTML(){
   '<tr>'+
   '<td onclick="showMarkers()">All</td>'+
   '</tr>';
-
+  console.log(contents[0].length)
   for(var i=0;i<contents[0].length;i++){
    text += '<tr>';
    text += '<td onclick="showSpecificMarkers('+i+')">';
@@ -318,6 +297,7 @@ function switchSearch(){
     document.getElementById('searchUser').hidden=true;
   }
 }
+
 function sendNoti(){
   if(sendNotification){
     rectangle.setMap(null); 
@@ -346,8 +326,9 @@ function sendNoti(){
   infoWindow = new google.maps.InfoWindow();
   sendNotification = true;
 }
-}
 
+}
+google.maps.event.addDomListener(window, 'load', initialize);
 </script>
 </head>
 <body>
@@ -384,7 +365,7 @@ function sendNoti(){
      <div class="col-sm-4">
       <h3>
        <button type="button" class="icon" onclick="addUser()" data-toggle="tooltip" data-placement="top" title="Add new user"><span class="glyphicon glyphicon-plus-sign"></span></button>
-       <button type="button" class="icon" onclick="sendNoti()" data-toggle="tooltip" data-placement="top" title="Send notification" hidden="true" id="btnSendNoti"><span class="glyphicon glyphicon-phone"></span></button>
+       <button type="button" class="icon" onclick="sendNoti()" data-toggle="tooltip" data-placement="top" title="Push notification" hidden="true" id="btnSendNoti"><span class="glyphicon glyphicon-phone"></span></button>
      </h3>
    </div>
  </div><!-- /.row -->

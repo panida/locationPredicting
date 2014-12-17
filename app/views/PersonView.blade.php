@@ -77,7 +77,6 @@ function prepareData(){
 
 function drop(){
 	for (var i = 0; i < contents.length; i++) {
-
 		addMarker(i);
 	}
 }
@@ -103,6 +102,7 @@ function addMarker(iterator) {
 		setInfoWindow(content);
 		infowindow.open(map,marker);
 	});
+
 }
 function setInfoWindow(content){
 	if (infowindow) {
@@ -116,7 +116,7 @@ function setInfoWindow(content){
 }
 
 function panToMarker(i) {
-	setInfoWindow(contents[i].latitude+', '+contents[i].longitude);
+	setInfoWindow(contents[i].date);
 	infowindow.open(map,markers[i]);
 	map.panTo(markers[i].getPosition());
 }
@@ -134,7 +134,7 @@ function prepareContentHTML(){
 	for(var i=0 ; i<contents.length ; i++) {
 		text += '<tr>';
 		text += '<td onclick="panToMarker('+i+')">';
-		text += ''+contents[i].date+'</br>'+contents[i].latitude+', '+contents[i].longitude+'</td>';
+		text += ''+contents[i].date+'</td>';
 		text += '</tr>';
 	}
 	text += '</tbody>';
@@ -245,8 +245,12 @@ function delUser(){
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-danger danger" onclick="delUser()">Yes</button>
+					
+          {{ Form::open(array('url' => '/deleteUser')) }}
+          {{ Form::hidden('id', $person->id) }}
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          {{ Form::submit('Yes',array('class'=>'btn btn-danger'))}}
+          {{ Form::close() }}
 				</div>
 			</div>
 		</div>
