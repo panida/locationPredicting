@@ -174,8 +174,8 @@ function showMarkers(){
   clearMarkers();
   markers=[];
   for(var i=0;i<users.length;i++){
-      markers.push([]);
-    }
+    markers.push([]);
+  }
   drop();
 }
 
@@ -356,13 +356,15 @@ function sendNoti(){
       <button class="btn btn-default" type="button" onclick="switchSearch()"><span id="searchIcon" class="glyphicon glyphicon-globe"></span></button>
     </div>
     <div class="col-sm-10" id="searchUser" hidden="true">
-
+      {{ Form::open(array('url' => 'searchUser')) }}
       <div class="input-group">
-        <input id="inputSearchUser" type="text" class="form-control" placeholder="Enter a username">
+        {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Enter a username'))}}
         <span class="input-group-btn">
-          <a href="{{ URL::to('/0') }}" class="btn btn-primary" type="button" id="btnSearchUser" onclick="searchUser()"><span class="glyphicon glyphicon-search"></span></a>
+          {{Form::button( '<span class="glyphicon glyphicon-search"></span>', array('class' => 'btn btn-primary', 'type'=>'submit'))}}
+          <!-- <a href="{{ URL::to('/0') }}" class="btn btn-primary" type="button" id="btnSearchUser" onclick="searchUser()"><span class="glyphicon glyphicon-search"></span></a> -->
         </span>
       </div><!-- /input-group -->
+      {{Form::close()}}
     </div>
     <div class="col-sm-10" id="searchLocation">
       <div class="input-group">
@@ -388,7 +390,7 @@ function sendNoti(){
  </div><!-- /.row -->
  <h4 id="panelTitle">Predicted Location</h4>
  <table class="table table-hover" id="locationContents">
-</table>
+ </table>
 </div><!--/predictPanel -->
 
 <div id="addPanel" class="col-sm-4 col-md-2" hidden="true">

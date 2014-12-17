@@ -17,7 +17,7 @@ class PersonController extends Controller {
 	}
 
 	public function showInfo($personId){
-		$person = Person::find($personId);
+		$person = DB::table('person')->where('personId', $personId)->first();
 		$locationLog = LocationLog::getLocationLogByPerson($personId);
 		$predictedLocation = PredictedLocation::getPredictedLocationByPerson($personId);
 		return View::make('PersonView',array('person'=>$person,'locationLog'=>$locationLog, 'predictedLocation'=>$predictedLocation));

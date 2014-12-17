@@ -186,7 +186,7 @@ function delUser(){
 		</div><!-- /input-group -->
 	</div>
 
-	<div id="leftPanel" class="col-sm-4 col-md-2" hidden="true">
+	<div id="leftPanel" class="col-sm-4 col-md-2">
 		<div class="row">
 			<div class="col-sm-6">
 				<h3>{{$person->name}}</h3>
@@ -221,7 +221,7 @@ function delUser(){
 			{{Form::file('inputFile');}}
 		</div>
 		{{Form::submit('add',array('class'=>'btn btn-primary'))}}
-		<button class="btn btn-default" onclick="search()">Cancel</button>
+		<a class="btn btn-default" href="{{ URL::previous()}}">Cancel</a>
 		{{Form::close()}}
 		<!-- </form> -->
 	</div><!--/addPanel -->

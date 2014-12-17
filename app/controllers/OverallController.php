@@ -30,4 +30,15 @@ class OverallController extends Controller {
 		return View::make('OverallView',array('users'=>$users,'predictedLocations'=>$predictedLocation));
 	}
 
+	public function searchUser(){
+		$username = Input::get('username');
+		$person = DB::table('person')->where('name', $username)->first();
+		if ($person){
+			return Redirect::to('/'.$person->personId);
+		}
+		else{
+			return Redirect::to('/');
+		}
+	}
+
 }
