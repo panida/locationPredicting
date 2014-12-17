@@ -16,18 +16,17 @@
  </script>
  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
  <script type="text/javascript">
- var berlin = new google.maps.LatLng(52.520816, 13.410186);
+ var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
 
- var users=[];
+ var contents = new Array();
+ var predictedLocationClient = new Array();
+
+ var users=new Array();
  var user=0;
  var dateTime = [];
 
-//  for (i = 0; i < 24; i++) {
-//   dateTime[i] = "2014/11/01."+i+":24:50";
-// }
-
-var markers = [];
-var specificMarkers =[];
+ var markers = [];
+ var specificMarkers =[];
 // var bounceMarker = null;
 var iterator = 0;
 var infowindow = null;
@@ -35,27 +34,34 @@ var map;
 var showPredictedLocation = true;
 var sendNotification = false;
 var dateTime=[];
-var userNumber=2;
+var userNumber=0;
 var searchLocation=true;
 
 function initialize() {
-  for(i=0;i<userNumber;i++){
-    users.push({
-      name: "user"+(i+1),
-      locations: [] 
-    });
+  prepareData();
+  contents = predictedLocationClient;
+  
+  for(var i=0;i<users.length;i++){
     markers.push([]);
   }
-  var lng =13.44;
-  for (i=0;i<24;i++) {
-    users[0].locations.push(new google.maps.LatLng(52.511467, lng));
-    users[1].locations.push(new google.maps.LatLng(52.471467, lng));
-    lng+=0.01;
-    dateTime.push("2014/11/01."+i+":24:50");
-  }
+
+  // for(i=0;i<userNumber;i++){
+  //   users.push({
+  //     name: "user"+(i+1),
+  //     locations: [] 
+  //   });
+  //   markers.push([]);
+  // }
+  // var lng =13.44;
+  // for (i=0;i<24;i++) {
+  //   users[0].locations.push(new google.maps.LatLng(52.511467, lng));
+  //   users[1].locations.push(new google.maps.LatLng(52.471467, lng));
+  //   lng+=0.01;
+  //   dateTime.push("2014/11/01."+i+":24:50");
+  // }
   var mapOptions = {
     zoom: 12,
-    center: berlin,
+    center: tokyo,
     mapTypeControl: true,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -76,8 +82,10 @@ function initialize() {
       position: google.maps.ControlPosition.RIGHT_TOP
     }
   }
+  
   map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
+  
   var input = /** @type {HTMLInputElement} */(
     document.getElementById('inputSearchLocation'));
   var autocomplete = new google.maps.places.Autocomplete(input);
@@ -106,10 +114,31 @@ function initialize() {
       ].join(' ');
     }
   });
-
+  var resultHTML = prepareContentHTML();
+  document.getElementById('locationContents').innerHTML = resultHTML;
   drop();
 }
+
 google.maps.event.addDomListener(window, 'load', initialize);
+
+function prepareData(){
+  @foreach($users as $user){
+    users.push('{{$user->name}}');
+  }
+  @endforeach
+
+  var iterator=0;
+  @foreach($predictedLocations as $locations){
+    predictedLocationClient.push([]);
+    @foreach($locations as $location){
+      var temp = { 'date':'{{$location->dateTime}}', 'latitude':{{$location->latitude}}, 'longitude':{{$location->longitude}} };
+      predictedLocationClient[iterator].push(temp);
+    }
+    @endforeach
+    iterator++;
+  }
+  @endforeach
+}
 
 function showNewRect(event) {
   var ne = rectangle.getBounds().getNorthEast();
@@ -121,13 +150,11 @@ function showNewRect(event) {
     specificMarkers[i].getPosition().lat()>=sw.lat()&&
     specificMarkers[i].getPosition().lng()<=ne.lng()&&
     specificMarkers[i].getPosition().lng()>=sw.lng();
-    console.log(member);
-
     if(isInRect){
       if(member!=""){
         member+=", ";
       }
-      member+=users[i].name;
+      member+=users[i];
     }
   }
   document.getElementById('selectedUsers').innerHTML = member; 
@@ -136,12 +163,22 @@ function showNewRect(event) {
 function drop(){
   for(var i=0;i<users.length;i++){
     user=i;
-    for (var j = 0; j < users[0].locations.length; j++) {
+    for (var j = 0; j < predictedLocationClient[i].length; j++) {
       addMarker();
     }
     iterator=0;
   }
 }
+
+function showMarkers(){
+  clearMarkers();
+  markers=[];
+  for(var i=0;i<users.length;i++){
+      markers.push([]);
+    }
+  drop();
+}
+
 function search() {
   if(searchLocation){
     document.getElementById('predictPanel').hidden=false; 
@@ -150,28 +187,25 @@ function search() {
     document.getElementById('sendNotiPanel').hidden=true; 
     rectangle.setMap(null); 
     sendNotification=false;
-    clearMarkers();
-    markers=[];
-    for(var i=0;i<userNumber;i++){
-      markers.push([]);
-    }
-    drop();  
+    showMarkers();  
+    var resultHTML = prepareContentHTML();
+    document.getElementById('locationContents').innerHTML = resultHTML;
   }else{
 
   }
-  
+
 }
 
 function addMarker() {
+  var tlocation = new google.maps.LatLng(contents[user][iterator].latitude, contents[user][iterator].longitude);
   markers[user].push(new google.maps.Marker({
-    position: users[user].locations[iterator],
+    position: tlocation,
     map: map,
     draggable: false,
-    animation: google.maps.Animation.DROP
   }));
-  var content = dateTime[iterator];
+  var content = contents[user][iterator].date;
   var marker = markers[user][iterator];
-  var username = users[user].name;
+  var username = users[user];
   google.maps.event.addListener(marker, 'click', function() {
     setInfoWindow(content,username);
     infowindow.open(map,marker);
@@ -190,15 +224,15 @@ function showSpecificMarkers(row){
 }
 
 function addSpecificMarkers(row){
+  var tlocation = new google.maps.LatLng(contents[user][row].latitude, contents[user][row].longitude);
   specificMarkers.push(new google.maps.Marker({
-    position: users[user].locations[row],
+    position: tlocation,
     map: map,
     draggable: false,
-    animation: google.maps.Animation.DROP
   }));
-  var content = dateTime[row];
+  var content = contents[user][row].date;
   var marker = specificMarkers[user];
-  var username = users[user].name;
+  var username = users[user];
   google.maps.event.addListener(marker, 'click', function() {
     setInfoWindow(content,username);
     infowindow.open(map,marker);
@@ -235,15 +269,30 @@ function showMarkers() {
   setAllMap(map);
 }
 
-function swap(){
+// function swap(){
+//   if(showPredictedLocation){
+//     showPredictedLocation = false;
+//     document.getElementById('panelTitle').innerHTML = "Location Log";
+//   }else{
+//     showPredictedLocation = true;
+//     document.getElementById('panelTitle').innerHTML = "Predicted Location";
+//   }
+// }
+function prepareContentHTML(){
+  var text = '<tbody>'+
+  '<tr>'+
+  '<td onclick="showMarkers()">All</td>'+
+  '</tr>';
 
-  if(showPredictedLocation){
-    showPredictedLocation = false;
-    document.getElementById('panelTitle').innerHTML = "Location Log";
-  }else{
-    showPredictedLocation = true;
-    document.getElementById('panelTitle').innerHTML = "Predicted Location";
-  }
+  for(var i=0;i<contents[0].length;i++){
+   text += '<tr>';
+   text += '<td onclick="showSpecificMarkers('+i+')">';
+   text += ''+contents[0][i].date+'</td>';
+   text += '</tr>';
+ }
+
+ text += '</tbody>';
+ return text;
 }
 
 function addUser(){
@@ -261,7 +310,7 @@ function switchSearch(){
     document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-user");
     document.getElementById('searchLocation').hidden=true;
     document.getElementById('searchUser').hidden=false;
-    
+
   }else{
     searchLocation=true;
     document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-globe");
@@ -274,14 +323,13 @@ function sendNoti(){
     rectangle.setMap(null); 
     document.getElementById('sendNotiPanel').hidden=true; 
     sendNotification=false;
-    
+
   }else {
     document.getElementById('sendNotiPanel').hidden=false; 
     var bounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(52.510816, 13.390186),
-      new google.maps.LatLng(52.530816, 13.430186)
+      new google.maps.LatLng(map.getCenter().lat()-0.01, map.getCenter().lng()-0.02),
+      new google.maps.LatLng(map.getCenter().lat()+0.01, map.getCenter().lng()+0.02)
       );
-
   // Define the rectangle and set its editable property to true.
   rectangle = new google.maps.Rectangle({
     bounds: bounds,
@@ -329,7 +377,7 @@ function sendNoti(){
   <div id="predictPanel" class="col-sm-4 col-md-2">
     <div class="row">
       <div class="col-sm-8">
-       <h3>2 Users</h3>
+       <h3>{{count($users)}} Users</h3>
      </div>
      <div class="col-sm-4">
       <h3>
@@ -339,17 +387,7 @@ function sendNoti(){
    </div>
  </div><!-- /.row -->
  <h4 id="panelTitle">Predicted Location</h4>
- <table class="table table-hover">
-  <tbody>
-    <tr>
-      <td onclick="search()">All</td>
-    </tr>
-    @for ($i = 0; $i < 24; $i++)
-    <tr>
-      <td onclick="showSpecificMarkers({{$i}})">2014/11/01.{{ $i }}:24:50 </td>
-    </tr>
-    @endfor
-  </tbody>
+ <table class="table table-hover" id="locationContents">
 </table>
 </div><!--/predictPanel -->
 
@@ -358,32 +396,18 @@ function sendNoti(){
  <hr>
  <!-- <form role="form"> -->
  {{ Form::open(array('url' => 'addUser','files'=>true)) }}
-  <div class="form-group">
+ <div class="form-group">
   {{Form::label('username','Username')}}
   {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Username'))}}
 </div>
 <div class="form-group">
-   {{Form::label('file','Location log')}}
-   {{Form::file('file')}}
+ {{Form::label('file','Location log')}}
+ {{Form::file('file')}}
 </div>
 <hr>
 {{Form::submit('Add', array('class' => 'btn btn-primary'))}}
 <a type="button" class="btn btn-default" href="{{ URL::previous()}}">Cancel</a>
 {{Form::close()}}
-
-<!-- 
- <div class="form-group">
-  <label for="inputUsername">Username</label>
-  <input type="text" id="inputUsername" class="form-control" placeholder="Username">
-</div>
-<div class="form-group">
-  <label for="exampleInputFile">Location log</label>
-  <input type="file" id="exampleInputFile">
-</div>
-<hr>
-<button type="submit" class="btn btn-primary">Add</button>
-<button class="btn btn-default" onclick="cancel()">Cancel</button> -->
-<!-- </form> -->
 </div><!--/addPanel -->
 
 <div id="sendNotiPanel" class="col-sm-4 col-md-2" hidden="true">
@@ -398,7 +422,6 @@ function sendNoti(){
     <label for="exampleInputFile">Message</label>
     <textarea type="text" id="exampleInputFile" class="form-control" placeholder="Message"></textarea>
   </div>
-  <hr>
   <button type="submit" class="btn btn-primary">Send</button>
   <!-- </form> -->
 </div><!--/addPanel -->

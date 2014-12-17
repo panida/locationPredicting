@@ -112,11 +112,6 @@ function setInfoWindow(content){
 }
 
 function panToMarker(i) {
-	// if(bounceMarker!=null){
-	//   bounceMarker.setAnimation(null);  
-	// }
-	// markers[i].setAnimation(google.maps.Animation.BOUNCE);
-	// bounceMarker = markers[i];
 	setInfoWindow(contents[i].latitude+', '+contents[i].longitude);
 	infowindow.open(map,markers[i]);
 	map.panTo(markers[i].getPosition());

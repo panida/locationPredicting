@@ -11,10 +11,7 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('OverallView');
-});
+Route::get('/', 'OverallController@showAllUsers');
 
 
 Route::get('/{personId}','PersonController@showInfo');
