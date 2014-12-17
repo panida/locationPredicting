@@ -13,7 +13,7 @@ class PersonController extends Controller {
 			$locationList = LocationLog::extractLocationListFromFile("upload/".$personId.'_'.$filename,$personId);
 			$locationLog = LocationLog::getLocationLogByPerson($personId);
 			$predictedLocationList = PredictionAlgorithm::predict($locationLog);
-			PredictedLocation::storePredictedData($predictedLocationList);
+			//PredictedLocation::storePredictedData($predictedLocationList);
 			var_dump($predictedLocationList);
 			//return View::make('blank_page');
 			return Redirect::to('/'.$personId);		
