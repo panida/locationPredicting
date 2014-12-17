@@ -154,7 +154,9 @@ function drop(){
     }
     iterator=0;
   }
-  map.panTo(markers[0][0].getPosition());
+  if(markers.length!=0){
+    // map.panTo(markers[0][0].getPosition());
+  }
 }
 
 function showMarkers(){
@@ -257,12 +259,14 @@ function clearMarkers() {
 //   }
 // }
 function prepareContentHTML(){
+  var text="'<tbody>'";
+  if(contents.length!=0){
   // dateTime = new Date();
   // var time=dateTime.getTime();
-  var text = '<tbody>'+
-  '<tr>'+
-  '<td onclick="showMarkers()">All</td>'+
-  '</tr>';
+  if(contents[0].length!=0){
+    text ='<tr>'+
+    '<td onclick="showMarkers()">All</td>'+
+    '</tr>';
  //  console.log(contents[0].length);
  //  for(var i=0;i<24;i++){
  //   text += '<tr>';
@@ -273,15 +277,24 @@ function prepareContentHTML(){
  //   dateTime.setHours(dateTime.getHours()+1);
  // }
 
-
+ console.log(contents[0].length);
  for(var i=0;i<contents[0].length;i++){
    text += '<tr>';
    text += '<td onclick="showSpecificMarkers('+i+')">';
    text += ''+contents[0][i].date+'</td>';
    text += '</tr>';
  }
- text += '</tbody>';
- return text;
+}
+else{
+ text ='<tr>'+
+ '<td">No predicted location</td>'+
+ '</tr>';
+}
+
+
+text += '</tbody>';
+}
+return text;
 }
 // function addZero(i) {
 //     if (i < 10) {
@@ -393,15 +406,15 @@ google.maps.event.addDomListener(window, 'load', initialize);
  <h3>Add New User</h3>
  <hr>
  <!-- <form role="form"> -->
- {{ Form::open(array('url' => 'addUser','files'=>true)) }}
+ {{ Form::open(array('url' => 'addUser')) }}
  <div class="form-group">
   {{Form::label('username','Username')}}
   {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Username'))}}
 </div>
-<div class="form-group">
+<!-- <div class="form-group">
  {{Form::label('file','Location log')}}
  {{Form::file('file')}}
-</div>
+</div> -->
 <hr>
 {{Form::submit('Add', array('class' => 'btn btn-primary'))}}
 <a type="button" class="btn btn-default" href="{{ URL::previous()}}">Cancel</a>
