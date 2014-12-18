@@ -10,7 +10,7 @@
  <!-- {{HTML::script('js/bootstrap.min.js');}} -->
  <!-- {{HTML::script('js/jquery-1.11.1.min.js');}}
  {{HTML::script('js/jquery.js');}} -->
- 
+ <link rel="stylesheet" href="css/jquery-ui.min.css">
  <script type="text/javascript"
  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDn7BL_KVNfQo3SlE7QCvRZ3xz84CB2T3U">
  </script>
@@ -99,6 +99,15 @@ function initialize() {
   var resultHTML = prepareContentHTML();
   document.getElementById('locationContents').innerHTML = resultHTML;
   showMarkers();
+
+  var usernames=[];
+  @foreach($users as $user){
+    usernames.push('{{$user->name}}');
+  }
+  @endforeach
+  $("#inputUsername").autocomplete({
+    source: usernames
+  });  
 }
 
 function prepareData(){
@@ -128,18 +137,6 @@ function showNewRect(event) {
   document.getElementById('selectedUsers').innerHTML = member; 
 
 }
-// function drop(){
-//   for(var i=0;i<users.length;i++){
-//     user=i;
-//     for (var j = 0; j < predictedLocationClient[i].length; j++) {
-//       addMarker();
-//     }
-//     iterator=0;
-//   }
-//   if(markers.length!=0){
-//     // map.panTo(markers[0][0].getPosition());
-//   }
-// }
 
 function showMarkers(){
 
@@ -157,16 +154,13 @@ function showMarkers(){
   clearAllMarkers();
 
   for(var i=0;i<timeGroups.length;i++){
-//     console.log(timeGroups[i].length);
-for(var j=0;j<timeGroups[i].users.length;j++){
-  addMarker(timeGroups[i].users[j]);
-  console.log("add");
-}
-}
-if(markers.length!=0){
- console.log(markers[0].getPosition());
- map.panTo(markers[0].getPosition()); 
-}
+    for(var j=0;j<timeGroups[i].users.length;j++){
+      addMarker(timeGroups[i].users[j]);
+    }
+  }
+  if(markers.length!=0){
+   map.panTo(markers[0].getPosition()); 
+ }
 }
 
 function addMarker(userInfo) {
@@ -333,7 +327,10 @@ function sendNoti(){
 }
 
 }
+
+
 google.maps.event.addDomListener(window, 'load', initialize);
+
 </script>
 </head>
 <body>
@@ -344,10 +341,9 @@ google.maps.event.addDomListener(window, 'load', initialize);
     <div class="col-sm-10" id="searchUser" hidden="true">
       {{ Form::open(array('url' => 'searchUser')) }}
       <div class="input-group">
-        {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Enter a username'))}}
+        {{Form::text('username', '', array('class' => 'form-control','id'=>'inputUsername', 'placeholder' => 'Enter a username'))}}
         <span class="input-group-btn">
           {{Form::button( '<span class="glyphicon glyphicon-search"></span>', array('class' => 'btn btn-primary', 'type'=>'submit'))}}
-          <!-- <a href="{{ URL::to('/0') }}" class="btn btn-primary" type="button" id="btnSearchUser" onclick="searchUser()"><span class="glyphicon glyphicon-search"></span></a> -->
         </span>
       </div><!-- /input-group -->
       {{Form::close()}}
@@ -365,7 +361,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
   <div id="predictPanel" class="col-sm-4 col-md-2">
     <div class="row">
       <div class="col-sm-8">
-       <h3>{{$usersCount}} Users</h3>
+       <h3>{{count($users)}} Users</h3>
      </div>
      <div class="col-sm-4">
       <h3>
@@ -388,6 +384,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
   {{Form::label('username','Username')}}
   {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Username'))}}
 </div>
+
 <div class="form-group">
  {{Form::label('file','Location log')}}
  {{Form::file('file')}}
@@ -437,10 +434,8 @@ google.maps.event.addDomListener(window, 'load', initialize);
     </div>
   </div>
 </div>
-<!-- {{HTML::script('js/bootstrap.min.js');}} -->
- <!-- {{HTML::script('js/jquery-1.11.1.min.js');}}
- {{HTML::script('js/jquery.js');}} -->
- <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
- <script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 </body>
 </html>

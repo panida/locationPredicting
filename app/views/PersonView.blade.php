@@ -90,6 +90,14 @@ function initialize() {
       ].join(' ');
     }
   });
+  var usernames=[];
+  @foreach($users as $user){
+    usernames.push('{{$user->name}}');
+  }
+  @endforeach
+  $("#inputUsername").autocomplete({
+    source: usernames
+  });  
 }
 
 function prepareData(){
@@ -226,10 +234,9 @@ function cancel(){
 		<div class="col-sm-10" id="searchUser" hidden="true">
       {{ Form::open(array('url' => 'searchUser')) }}
       <div class="input-group">
-        {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Enter a username'))}}
+        {{Form::text('username', '', array('class' => 'form-control','id'=>'inputUsername', 'placeholder' => 'Enter a username'))}}
         <span class="input-group-btn">
           {{Form::button( '<span class="glyphicon glyphicon-search"></span>', array('class' => 'btn btn-primary', 'type'=>'submit'))}}
-          <!-- <a href="{{ URL::to('/0') }}" class="btn btn-primary" type="button" id="btnSearchUser" onclick="searchUser()"><span class="glyphicon glyphicon-search"></span></a> -->
         </span>
       </div><!-- /input-group -->
       {{Form::close()}}

@@ -30,7 +30,8 @@ class PersonController extends Controller {
 			$lastestDate = $locationLog[0]->dateTime;
 			$predictedLocation = PredictedLocation::getPredictedLocationByPerson($person->id, $lastestDate);
 		}
-		return View::make('PersonView',array('person'=>$person,'locationLog'=>$locationLog, 'predictedLocation'=>$predictedLocation));
+		$users = Person::getAllUsers();
+		return View::make('PersonView',array('person'=>$person,'locationLog'=>$locationLog, 'predictedLocation'=>$predictedLocation, 'users'=>$users));
 	}
 
 	public function deleteUser($id){

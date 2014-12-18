@@ -25,7 +25,6 @@ class OverallController extends Controller {
 		$predictedLocations = PredictedLocation::getAllPredictedLocation();
 		$rows = array();
 		$users = Person::getAllUsers();
-		$usersCount =count($users); 
 		if(count($predictedLocations)>0){
 			$tdateTime = $predictedLocations[0]->dateTime;
 			$init = (object) ['dateTime' => $tdateTime,'users' => array()];
@@ -50,7 +49,7 @@ class OverallController extends Controller {
 				}
 			}
 		}
-		return View::make('OverallView',array('timeGroups'=>$rows,'usersCount'=>$usersCount));
+		return View::make('OverallView',array('timeGroups'=>$rows,'users'=>$users));
 	}
 
 	public function searchUser(){
