@@ -281,7 +281,7 @@ function prepareContentHTML(){
   // }
   
 
- if(timeGroups.length==0){
+  if(timeGroups.length==0){
    text ='<tr>'+
    '<td">No predicted location</td>'+
    '</tr>';
@@ -400,15 +400,15 @@ google.maps.event.addDomListener(window, 'load', initialize);
  <h3>Add New User</h3>
  <hr>
  <!-- <form role="form"> -->
- {{ Form::open(array('url' => 'addUser')) }}
+ {{ Form::open(array('url' => 'addUser','files'=>true)) }}
  <div class="form-group">
   {{Form::label('username','Username')}}
   {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Username'))}}
 </div>
-<!-- <div class="form-group">
+<div class="form-group">
  {{Form::label('file','Location log')}}
  {{Form::file('file')}}
-</div> -->
+</div>
 <hr>
 {{Form::submit('Add', array('class' => 'btn btn-primary'))}}
 <a type="button" class="btn btn-default" href="{{ URL::previous()}}">Cancel</a>

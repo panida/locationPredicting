@@ -4,4 +4,7 @@ class Person extends Eloquent{
 	public $timestamps = false;
 	protected $fillable = array('personId','name');
 
+	public static function getAllUsers(){
+		return $users = DB::table('person')->get();
+	}
 }

@@ -3,19 +3,23 @@
 class OverallController extends Controller {
 
 	public function addUser(){
-		// if (Input::hasFile('file'))
-		// {
-		// 	$file = Input::file('file');
-		// 	$filename = $file->getClientOriginalName();
-		// 	Input::file('file')->move('upload/', $filename);
-		// 	$username = Input::get('username');
-		// 	$id=DB::table('person')->insertGetId(array('name' => $username,'personId' => $username));	
-		// 	$locationList = LocationLog::extractLocationListFromFile("upload/".$filename,$id);
-		// 	return Redirect::to('/'.$id);		
-		// }
-		$username = Input::get('username');
-		$id=DB::table('person')->insertGetId(array('name' => $username,'personId' => $username));
-		return Redirect::to('/'.$id);	
+		if (Input::hasFile('file'))
+		{
+			$file = Input::file('file');
+			$filename = $file->getClientOriginalName();
+			Input::file('file')->move('upload/', $filename);
+			$username = Input::get('username');
+			$id=DB::table('person')->insertGetId(array('name' => $username,'personId' => $username));	
+			$locationList = LocationLog::extractLocationListFromFile("upload/".$filename,$id);
+			$locationLog = LocationLog::getLocationLogByPerson($id);
+			$predictedLocationList = PredictionAlgorithm::predict($locationLog);
+			$lastestDate = $locationLog[0]->dateTime;
+			PredictedLocation::storePredictedData($predictedLocationList,$id,$lastestDate);
+			return Redirect::to('/'.$id);		
+		}
+		// $username = Input::get('username');
+		// $id=DB::table('person')->insertGetId(array('name' => $username,'personId' => $username));
+		return Redirect::to('/');	
 	}
 	public function showAllPredictedLocation(){
 		$predictedLocations = PredictedLocation::getAllPredictedLocation();
@@ -42,7 +46,7 @@ class OverallController extends Controller {
 				array_push($rows,$temp);	
 			 }
 		}
-		 $users = DB::table('person')->get();
+		 $users = Person::getAllUsers();
 		 $usersCount =count($users); 
 		// $predictedLocations = array();
 		// for($i=0;$i<count($users);$i++){
