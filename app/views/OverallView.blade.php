@@ -3,13 +3,8 @@
 <head>
  <meta charset="utf-8">
  <title>EBA</title>
- <!-- <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"> -->
-
  {{HTML::style('css/bootstrap.min.css');}}
  {{HTML::style('css/overallview.css');}}
- <!-- {{HTML::script('js/bootstrap.min.js');}} -->
- <!-- {{HTML::script('js/jquery-1.11.1.min.js');}}
- {{HTML::script('js/jquery.js');}} -->
  <link rel="stylesheet" href="css/jquery-ui.min.css">
  <script type="text/javascript"
  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDn7BL_KVNfQo3SlE7QCvRZ3xz84CB2T3U">
@@ -19,25 +14,20 @@
  var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
 
  var contents = new Array();
- // var predictedLocationClient = new Array();
-
  var users=new Array();
- var user="";
-
  var markers = [];
  var specificMarkers =[];
-// var bounceMarker = null;
-var iterator = 0;
-var infowindow = null;
-var map;
-var showPredictedLocation = true;
-var sendNotification = false;
-var dateTime;
-var searchLocation=true;
-var rectangle;
-var timeGroups = new Array();
+ var iterator = 0;
+ var infowindow = null;
+ var map;
+ var showPredictedLocation = true;
+ var sendNotification = false;
+ var dateTime;
+ var searchLocation=true;
+ var rectangle;
+ var timeGroups = new Array();
 
-function initialize() {
+ function initialize() {
   dateTime = new Date();
   prepareData();
   // contents = predictedLocationClient;
@@ -184,37 +174,25 @@ function showSpecificMarkers(row){
   clearAllMarkers();
   for(var i=0;i<timeGroups[row].users.length;i++){
     addSpecificMarkers(timeGroups[row].users[i]);
+    users.push(timeGroups[row].users[i].username);
   }
   map.panTo(specificMarkers[0].getPosition());
 }
 
 function addSpecificMarkers(userInfo){
-    // var tlocation = new google.maps.LatLng(contents[user][row].latitude, contents[user][row].longitude);
-    // specificMarkers.push(new google.maps.Marker({
-    //   position: tlocation,
-    //   map: map,
-    //   draggable: false,
-    // }));
-    // var content = contents[user][row].date;
-    // var marker = specificMarkers[user];
-    // var username = users[user];
-    // google.maps.event.addListener(marker, 'click', function() {
-    //   setInfoWindow(content,username);
-    //   infowindow.open(map,marker);
-    // });  
-var location = new google.maps.LatLng(userInfo.latitude, userInfo.longitude);
-var content = userInfo.dateTime;
-var marker = new google.maps.Marker({
-  position: location,
-  map: map,
-  draggable: false
-});
-specificMarkers.push(marker);
-var username = userInfo.username;
-google.maps.event.addListener(marker, 'click', function() {
-  setInfoWindow(content,username);
-  infowindow.open(map,marker);
-});  
+  var location = new google.maps.LatLng(userInfo.latitude, userInfo.longitude);
+  var content = userInfo.dateTime;
+  var marker = new google.maps.Marker({
+    position: location,
+    map: map,
+    draggable: false
+  });
+  specificMarkers.push(marker);
+  var username = userInfo.username;
+  google.maps.event.addListener(marker, 'click', function() {
+    setInfoWindow(content,username);
+    infowindow.open(map,marker);
+  });  
 }
 
 function setInfoWindow(content,username){
@@ -239,17 +217,9 @@ function clearAllMarkers() {
     specificMarkers[i].setMap(null);
   }
   specificMarkers =[];
+  users=[];
 }
 
-// function swap(){
-//   if(showPredictedLocation){
-//     showPredictedLocation = false;
-//     document.getElementById('panelTitle').innerHTML = "Location Log";
-//   }else{
-//     showPredictedLocation = true;
-//     document.getElementById('panelTitle').innerHTML = "Predicted Location";
-//   }
-// }
 function prepareContentHTML(){
   var text='<tbody>';
   for(var i=0;i<timeGroups.length;i++){
@@ -267,19 +237,16 @@ function prepareContentHTML(){
  text += '</tbody>';
  return text;
 }
-// function addZero(i) {
-//     if (i < 10) {
-//         i = "0" + i;
-//     }
-//     return i;
-// }
+
 function addUser(){
   document.getElementById('predictPanel').hidden=true;  
   document.getElementById('addPanel').hidden=false;
 }
 
-function delUser(){
-
+function cancel(){
+  console.log("cancel");
+  document.getElementById('predictPanel').hidden=false;  
+  document.getElementById('addPanel').hidden=true;
 }
 
 function switchSearch(){
@@ -360,39 +327,41 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
   <div id="predictPanel" class="col-sm-4 col-md-2">
     <div class="row">
-      <div class="col-sm-8">
-       <h3>{{count($users)}} Users</h3>
+      <div class="col-sm-9">
+        @if (count($users) <= 1)
+        <h3>{{count($users)}} User</h3>
+        @else
+        <h3>{{count($users)}} Users</h3>
+        @endif
+      </div>
+      <div class="col-sm-3">
+        <h3>
+         <button type="button" class="icon" onclick="addUser()" data-toggle="tooltip" data-placement="top" title="Add new user"><span class="glyphicon glyphicon-plus-sign"></span></button>
+         <button type="button" class="icon" onclick="sendNoti()" data-toggle="tooltip" data-placement="top" title="Push notification" hidden="true" id="btnSendNoti"><span class="glyphicon glyphicon-phone"></span></button>
+       </h3>
      </div>
-     <div class="col-sm-4">
-      <h3>
-       <button type="button" class="icon" onclick="addUser()" data-toggle="tooltip" data-placement="top" title="Add new user"><span class="glyphicon glyphicon-plus-sign"></span></button>
-       <button type="button" class="icon" onclick="sendNoti()" data-toggle="tooltip" data-placement="top" title="Push notification" hidden="true" id="btnSendNoti"><span class="glyphicon glyphicon-phone"></span></button>
-     </h3>
-   </div>
- </div><!-- /.row -->
- <h4 id="panelTitle">Predicted Location</h4>
- <table class="table table-hover" id="locationContents">
- </table>
-</div><!--/predictPanel -->
+   </div><!-- /.row -->
+   <h4 id="panelTitle">Predicted Location</h4>
+   <table class="table table-hover" id="locationContents">
+   </table>
+ </div><!--/predictPanel -->
 
-<div id="addPanel" class="col-sm-4 col-md-2" hidden="true">
- <h3>Add New User</h3>
- <hr>
- <!-- <form role="form"> -->
- {{ Form::open(array('url' => 'addUser','files'=>true)) }}
- <div class="form-group">
-  {{Form::label('username','Username')}}
-  {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Username'))}}
-</div>
+ <div id="addPanel" class="col-sm-4 col-md-2" hidden="true">
+   <h3>Add New User</h3>
+   <!-- <form role="form"> -->
+   {{ Form::open(array('url' => 'addUser','files'=>true)) }}
+   <div class="form-group">
+    {{Form::label('username','Username')}}
+    {{Form::text('username', '', array('class' => 'form-control', 'placeholder' => 'Username'))}}
+  </div>
 
-<div class="form-group">
- {{Form::label('file','Location log')}}
- {{Form::file('file')}}
-</div>
-<hr>
-{{Form::submit('Add', array('class' => 'btn btn-primary'))}}
-<a type="button" class="btn btn-default" href="{{ URL::previous()}}">Cancel</a>
-{{Form::close()}}
+  <div class="form-group">
+   {{Form::label('file','Location log')}}
+   {{Form::file('file')}}
+ </div>
+ {{Form::submit('Add', array('class' => 'btn btn-primary'))}}
+ <a class="btn btn-default" onclick="cancel()">Cancel</a>
+ {{Form::close()}}
 </div><!--/addPanel -->
 
 <div id="sendNotiPanel" class="col-sm-4 col-md-2" hidden="true">

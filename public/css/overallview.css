@@ -28,7 +28,7 @@ html, body, #map-canvas {
   top: 20px;
   left: 20px;
   right: 100%;
-  height: 610px;
+  max-height: 610px;
   z-index: 5;
   background-color: #fff;
 }
@@ -37,7 +37,7 @@ html, body, #map-canvas {
   top: 20px;
   left: 20px;
   right: 100%;
-  height: 300px;
+  height: 250px;
   z-index: 5;
   background-color: #fff;
 }
@@ -46,13 +46,13 @@ html, body, #map-canvas {
   position: absolute;
   top: 100px;
   right: 50px;
-  height: 310px;
+  max-height: 310px;
   z-index: 5;
   background-color: #fff;
 }
 
 #selectedUsersPanel {
-  height: 70px;
+  max-height: 70px;
   overflow-y: auto;
 }
 
@@ -98,7 +98,7 @@ thead th {
 }
 
 tbody {
-  height: 500px;
+  max-height: 500px;
   overflow-y: auto;
 }
 

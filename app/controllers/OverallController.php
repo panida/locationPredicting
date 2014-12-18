@@ -3,6 +3,7 @@
 class OverallController extends Controller {
 
 	public function addUser(){
+	
 		if (Input::hasFile('file'))
 		{
 			$file = Input::file('file');
@@ -17,8 +18,6 @@ class OverallController extends Controller {
 			PredictedLocation::storePredictedData($predictedLocationList,$id,$lastestDate);
 			return Redirect::to('/'.$id);		
 		}
-		// $username = Input::get('username');
-		// $id=DB::table('person')->insertGetId(array('name' => $username,'personId' => $username));
 		return Redirect::to('/');	
 	}
 	public function showAllPredictedLocation(){

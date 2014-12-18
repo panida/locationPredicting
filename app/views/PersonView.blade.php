@@ -3,75 +3,67 @@
 <head>
 	<meta charset="utf-8">
 	<title>EBA</title>
-	<!-- <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"> -->
-
 	{{HTML::style('css/bootstrap.min.css');}}
 	{{HTML::style('css/personview.css');}}
-	<!-- {{HTML::script('js/bootstrap.min.js');}} -->
- <!-- {{HTML::script('js/jquery-1.11.1.min.js');}}
- {{HTML::script('js/jquery.js');}} -->
- 
- <script type="text/javascript"
- src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDn7BL_KVNfQo3SlE7QCvRZ3xz84CB2T3U">
- </script>
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
- <script type="text/javascript">
- var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
+  <link rel="stylesheet" href="css/jquery-ui.min.css">
+  <script type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDn7BL_KVNfQo3SlE7QCvRZ3xz84CB2T3U">
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+  <script type="text/javascript">
+  var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
 
- var contents = new Array();
- var predictedLocationClient = new Array();
- var locationLogClient = new Array();
+  var contents = new Array();
+  var predictedLocationClient = new Array();
+  var locationLogClient = new Array();
+
+  var markers = [];
+  var infowindow = null;
+  var map;
+  var showPredictedLocation = false;
+
+  function initialize() {
+   prepareData();
+   contents = predictedLocationClient;
+   var mapOptions = {
+    zoom: 12,
+    center: tokyo,
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+     style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+     position: google.maps.ControlPosition.BOTTOM_CENTER
+   },
+   panControl: true,
+   panControlOptions: {
+     position: google.maps.ControlPosition.TOP_RIGHT
+   },
+   zoomControl: true,
+   zoomControlOptions: {
+     style: google.maps.ZoomControlStyle.LARGE,
+     position: google.maps.ControlPosition.RIGHT_CENTER
+   },
+   scaleControl: true,
+   streetViewControl: true,
+   streetViewControlOptions: {
+     position: google.maps.ControlPosition.RIGHT_TOP
+   }
+ }
 
 
+ map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
+ swap();
+ document.getElementById('leftPanel').hidden=false; 
+ document.getElementById('addPanel').hidden=true; 
 
- var markers = [];
-// var bounceMarker = null;
-var infowindow = null;
-var map;
-var showPredictedLocation = false;
-
-function initialize() {
-	prepareData();
-	contents = predictedLocationClient;
-	var mapOptions = {
-		zoom: 12,
-		center: tokyo,
-		mapTypeControl: true,
-		mapTypeControlOptions: {
-			style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-			position: google.maps.ControlPosition.BOTTOM_CENTER
-		},
-		panControl: true,
-		panControlOptions: {
-			position: google.maps.ControlPosition.TOP_RIGHT
-		},
-		zoomControl: true,
-		zoomControlOptions: {
-			style: google.maps.ZoomControlStyle.LARGE,
-			position: google.maps.ControlPosition.RIGHT_CENTER
-		},
-		scaleControl: true,
-		streetViewControl: true,
-		streetViewControlOptions: {
-			position: google.maps.ControlPosition.RIGHT_TOP
-		}
-	}
-
-	
-	map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
-	swap();
-	document.getElementById('leftPanel').hidden=false; 
-	document.getElementById('addPanel').hidden=true; 
-	
-	var input = /** @type {HTMLInputElement} */(document.getElementById('inputSearchLocation'));
-  var autocomplete = new google.maps.places.Autocomplete(input);
-  autocomplete.bindTo('bounds', map);
-  autocomplete.setTypes([]);
-  google.maps.event.addListener(autocomplete, 'place_changed', function() {
-    var place = autocomplete.getPlace();
-    if (!place.geometry) {
-      return;
-    }
+ var input = /** @type {HTMLInputElement} */(document.getElementById('inputSearchLocation'));
+ var autocomplete = new google.maps.places.Autocomplete(input);
+ autocomplete.bindTo('bounds', map);
+ autocomplete.setTypes([]);
+ google.maps.event.addListener(autocomplete, 'place_changed', function() {
+  var place = autocomplete.getPlace();
+  if (!place.geometry) {
+    return;
+  }
 
     // If the place has a geometry, then present it on a map.
     if (place.geometry.viewport) {
@@ -90,14 +82,14 @@ function initialize() {
       ].join(' ');
     }
   });
-  var usernames=[];
-  @foreach($users as $user){
-    usernames.push('{{$user->name}}');
-  }
-  @endforeach
-  $("#inputUsername").autocomplete({
-    source: usernames
-  });  
+ var usernames=[];
+ @foreach($users as $user){
+  usernames.push('{{$user->name}}');
+}
+@endforeach
+$("#inputUsername").autocomplete({
+  source: usernames
+});  
 }
 
 function prepareData(){
@@ -192,7 +184,6 @@ function prepareContentHTML(){
 }
 
 function swap(){
-
 	if(showPredictedLocation){
 		showPredictedLocation = false;
 		document.getElementById('panelTitle').innerHTML = "Location Log";
@@ -201,9 +192,7 @@ function swap(){
 		showPredictedLocation = true;
 		contents = predictedLocationClient;
 		document.getElementById('panelTitle').innerHTML = "Predicted Location";
-
 	}
-
 	var resultHTML = prepareContentHTML();
 	document.getElementById('locationContents').innerHTML = resultHTML;
 	clearOverlays();
@@ -220,55 +209,61 @@ function cancel(){
   document.getElementById('leftPanel').hidden=false;  
   document.getElementById('addPanel').hidden=true;
 }
-// $(function () {
-//   $('[data-toggle="tooltip"]').tooltip()
-// })
+
 </script>
 </head>
 <body>
-
 	<div id="searchPanel" class="row">
-     <div class="col-sm-2">
-      <button class="btn btn-default" type="button" onclick="switchSearch()"><span id="searchIcon" class="glyphicon glyphicon-globe"></span></button>
-    </div>
-		<div class="col-sm-10" id="searchUser" hidden="true">
-      {{ Form::open(array('url' => 'searchUser')) }}
-      <div class="input-group">
-        {{Form::text('username', '', array('class' => 'form-control','id'=>'inputUsername', 'placeholder' => 'Enter a username'))}}
-        <span class="input-group-btn">
-          {{Form::button( '<span class="glyphicon glyphicon-search"></span>', array('class' => 'btn btn-primary', 'type'=>'submit'))}}
-        </span>
-      </div><!-- /input-group -->
-      {{Form::close()}}
-    </div>
-    <div class="col-sm-10" id="searchLocation">
-      <div class="input-group">
-        <input id="inputSearchLocation" type="text" class="form-control" placeholder="Enter a location">
-        <span class="input-group-btn">
-          <button class="btn btn-primary" type="button" id="btnSearchLocation"><span class="glyphicon glyphicon-search"></span></button>
-        </span>
-      </div><!-- /input-group -->
-    </div>
+   <div class="col-sm-2">
+    <button class="btn btn-default" type="button" onclick="switchSearch()"><span id="searchIcon" class="glyphicon glyphicon-globe"></span></button>
   </div>
+  <div class="col-sm-10" id="searchUser" hidden="true">
+    {{ Form::open(array('url' => 'searchUser')) }}
+    <div class="input-group">
+      {{Form::text('username', '', array('class' => 'form-control','id'=>'inputUsername', 'placeholder' => 'Enter a username'))}}
+      <span class="input-group-btn">
+        {{Form::button( '<span class="glyphicon glyphicon-search"></span>', array('class' => 'btn btn-primary', 'type'=>'submit'))}}
+      </span>
+    </div><!-- /input-group -->
+    {{Form::close()}}
+  </div>
+  <div class="col-sm-10" id="searchLocation">
+    <div class="input-group">
+      <input id="inputSearchLocation" type="text" class="form-control" placeholder="Enter a location">
+      <span class="input-group-btn">
+        <button class="btn btn-primary" type="button" id="btnSearchLocation"><span class="glyphicon glyphicon-search"></span></button>
+      </span>
+    </div><!-- /input-group -->
+  </div>
+</div>
 
+<div id="leftPanel" class="col-sm-4 col-md-2">
+  <div class="row">
+   <div class="col-sm-6">
+    <h3>{{$person->name}}</h3>
+  </div>
+  <div class="col-sm-6">
 
-  <div id="leftPanel" class="col-sm-4 col-md-2">
-    <div class="row">
-     <div class="col-sm-6">
-      <h3>{{$person->name}}</h3>
-    </div>
-    <div class="col-sm-6">
+    <h3>
+      <a href="{{URL::to('/')}}" type="button" class="icon" data-placement="top" title="Back to view all users' predicted location"><span class="glyphicon glyphicon-home"></span></a>
+      <button type="button" class="icon" onclick="addData()" data-toggle="tooltip" data-placement="top" title="Add more location information"><span class="glyphicon glyphicon-plus"></span></button>
+      <button type="button" class="icon" data-toggle="modal" data-target="#confirm-delete" data-placement="top" title="Delete this user's location information"><span class="glyphicon glyphicon-trash"></span></button>
+    </h3>
+  </div>
+</div><!-- /.row -->
+<div class="row">
+  <div class="col-sm-10">
+    <h4 id="panelTitle">Predicted Location</h4>
+  </div>
+  <div class="col-sm-2 nopadding">
+    <h4>
+      <button type="button" class="icon" onclick="swap()" data-toggle="tooltip" data-placement="right" title="Switch to Location Log"><span class="glyphicon glyphicon-retweet"></span></button>
+    </h4>
+  </div>
+</div>
 
-      <h3>
-       <button type="button" class="icon" onclick="swap()" data-toggle="tooltip" data-placement="right" title="Switch to Location Log"><span class="glyphicon glyphicon-retweet"></span></button>
-       <button type="button" class="icon" onclick="addData()" data-toggle="tooltip" data-placement="top" title="Add more location information"><span class="glyphicon glyphicon-plus"></span></button>
-       <button type="button" class="icon" data-toggle="modal" data-target="#confirm-delete" data-placement="top" title="Delete this user's location information"><span class="glyphicon glyphicon-trash"></span></button>
-     </h3>
-   </div>
- </div><!-- /.row -->
- <h4 id="panelTitle">Predicted Location</h4>
- <table class="table table-hover" id="locationContents">
- </table>
+<table class="table table-hover" id="locationContents">
+</table>
 </div>
 
 
@@ -327,5 +322,6 @@ function cancel(){
  {{HTML::script('js/jquery.js');}} -->
  <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+ <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 </body>
 </html>
