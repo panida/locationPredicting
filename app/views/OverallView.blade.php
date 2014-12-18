@@ -264,37 +264,28 @@ function prepareContentHTML(){
    text += ''+timeGroups[i].dateTime+'</td>';
    text += '</tr>';
  }
-  // if(contents.length!=0){
-  // // dateTime = new Date();
-  // // var time=dateTime.getTime();
-  // if(contents[0].length!=0){
-  //   text ='<tr>'+
-  //   '<td onclick="showMarkers()">All</td>'+
-  //   '</tr>';
- //  console.log(contents[0].length);
- //  for(var i=0;i<24;i++){
- //   text += '<tr>';
- //   text += '<td onclick="showSpecificMarkers('+i+')">';
- //   text += ''+dateTime.getFullYear()+'-'+dateTime.getMonth()+'-'+dateTime.getDate();
- //   text += ' '+addZero(dateTime.getHours())+':'+addZero(dateTime.getMinutes())+':'+addZero(dateTime.getSeconds())+'</td>';
- //   text += '</tr>';
- //   dateTime.setHours(dateTime.getHours()+1);
- // }
 
 
- // for(var i=0;i<contents[0].length;i++){
- //   text += '<tr>';
- //   text += '<td onclick="showSpecificMarkers('+i+')">';
- //   text += ''+contents[0][i].date+'</td>';
- //   text += '</tr>';
- // }
- 
+
+  // for(var i=0; i<contents.length;i++){
+  //   text +='<tr>'+'<td><h4>'+users[i]+'</h4></td>'+'</tr>';
+  //   for(var j=0;j<contents[i].length;j++){
+  //     text += '<tr>';
+  //     text += '<td onclick="showSpecificMarkers('+j+')">';
+  //     text += ''+contents[i][j].date+'</td>';
+  //     text += '</tr>';
+  //   }
+  //   if(contents[i].length==0){
+  //     text +='<tr>'+'<td>No predicted location</td>'+'</tr>';
+  //   }
+  // }
+  
+
  if(timeGroups.length==0){
    text ='<tr>'+
    '<td">No predicted location</td>'+
    '</tr>';
  }  
-
 
  text += '</tbody>';
  return text;

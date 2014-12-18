@@ -23,8 +23,6 @@ class OverallController extends Controller {
 		$tdateTime = $predictedLocations[0]->dateTime;
 		$init = (object) ['dateTime' => $tdateTime,'users' => array()];
 		array_push($rows,$init);
-		// var_dump($tdateTime);
-		// var_dump(date('H', $tdateTime));
 		foreach ($predictedLocations as $predictedLocation) {
 			$user = Person::find($predictedLocation->personId);
 			$userInfo = (object)[
@@ -32,12 +30,7 @@ class OverallController extends Controller {
 			'latitude'=>$predictedLocation->latitude,
 			'longitude'=>$predictedLocation->longitude,
 			'dateTime'=>$predictedLocation->dateTime];
-			//var_dump($tdateTime);
-			
-			//var_dump($tdateTime->diff(strtotime($predictedLocation->dateTime)));
-
 			$interval = strtotime($predictedLocation->dateTime) - strtotime($tdateTime);
-			
 			if($interval < 3600){
 				end($rows);
 			 	array_push($rows[key($rows)]->users,$userInfo);
@@ -49,7 +42,6 @@ class OverallController extends Controller {
 				array_push($rows,$temp);	
 			 }
 		}
-		// var_dump($rows[4]);
 		 $users = DB::table('person')->get();
 		 $usersCount =count($users); 
 		// $predictedLocations = array();
