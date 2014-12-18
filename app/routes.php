@@ -21,5 +21,5 @@ Route::get('/{personId}','PersonController@showInfo');
 
 Route::post('/upload/{personId}', 'PersonController@importLocationLog');
 
-Route::get('/deleteUser/{personId}', 'PersonController@deleteUser');
+Route::post('/deleteUser/{personId}', 'PersonController@deleteUser');
 

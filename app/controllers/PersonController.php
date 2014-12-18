@@ -32,8 +32,8 @@ class PersonController extends Controller {
 		}
 		return View::make('PersonView',array('person'=>$person,'locationLog'=>$locationLog, 'predictedLocation'=>$predictedLocation));
 	}
+
 	public function deleteUser($id){
-		
 		LocationLog::where('personId', $id)->delete();
 		PredictedLocation::where('personId', $id)->delete();
 		$person = Person::find($id);

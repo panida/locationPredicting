@@ -24,40 +24,32 @@ class OverallController extends Controller {
 	public function showAllPredictedLocation(){
 		$predictedLocations = PredictedLocation::getAllPredictedLocation();
 		$rows = array();
-		$tdateTime = $predictedLocations[0]->dateTime;
-		$init = (object) ['dateTime' => $tdateTime,'users' => array()];
-		array_push($rows,$init);
-		foreach ($predictedLocations as $predictedLocation) {
-			$user = Person::find($predictedLocation->personId);
-			$userInfo = (object)[
-			'username'=>$user->name, 
-			'latitude'=>$predictedLocation->latitude,
-			'longitude'=>$predictedLocation->longitude,
-			'dateTime'=>$predictedLocation->dateTime];
-			$interval = strtotime($predictedLocation->dateTime) - strtotime($tdateTime);
-			if($interval < 3600){
-				end($rows);
-			 	array_push($rows[key($rows)]->users,$userInfo);
+		$users = Person::getAllUsers();
+		$usersCount =count($users); 
+		if(count($predictedLocations)>0){
+			$tdateTime = $predictedLocations[0]->dateTime;
+			$init = (object) ['dateTime' => $tdateTime,'users' => array()];
+			array_push($rows,$init);
+			foreach ($predictedLocations as $predictedLocation) {
+				$user = Person::find($predictedLocation->personId);
+				$userInfo = (object)[
+				'username'=>$user->name, 
+				'latitude'=>$predictedLocation->latitude,
+				'longitude'=>$predictedLocation->longitude,
+				'dateTime'=>$predictedLocation->dateTime];
+				$interval = strtotime($predictedLocation->dateTime) - strtotime($tdateTime);
+				if($interval < 3600){
+					end($rows);
+					array_push($rows[key($rows)]->users,$userInfo);
+				}
+				else{
+					$tdateTime = $predictedLocation->dateTime;
+					$temp = (object) ['dateTime' => $tdateTime,'users' => array()];
+					array_push($temp->users,$userInfo);
+					array_push($rows,$temp);	
+				}
 			}
-			else{
-				$tdateTime = $predictedLocation->dateTime;
-				$temp = (object) ['dateTime' => $tdateTime,'users' => array()];
-				array_push($temp->users,$userInfo);
-				array_push($rows,$temp);	
-			 }
 		}
-		 $users = Person::getAllUsers();
-		 $usersCount =count($users); 
-		// $predictedLocations = array();
-		// for($i=0;$i<count($users);$i++){
-		// 	$predictedLocation = array();
-		// 	$tpredictedLocation = PredictedLocation::getPredictedLocationByPerson2($users[$i]->id);
-		// 	for($j=0;$j<count($tpredictedLocation);$j++){
-		// 		array_push($predictedLocation, $tpredictedLocation[$j]);
-		// 	}
-		// 	array_push($predictedLocations, $predictedLocation);
-		// }
-		// return View::make('OverallView',array('users'=>$users,'predictedLocations'=>$predictedLocations));
 		return View::make('OverallView',array('timeGroups'=>$rows,'usersCount'=>$usersCount));
 	}
 

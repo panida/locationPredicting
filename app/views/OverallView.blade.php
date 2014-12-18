@@ -264,26 +264,9 @@ function prepareContentHTML(){
    text += ''+timeGroups[i].dateTime+'</td>';
    text += '</tr>';
  }
-
-
-
-  // for(var i=0; i<contents.length;i++){
-  //   text +='<tr>'+'<td><h4>'+users[i]+'</h4></td>'+'</tr>';
-  //   for(var j=0;j<contents[i].length;j++){
-  //     text += '<tr>';
-  //     text += '<td onclick="showSpecificMarkers('+j+')">';
-  //     text += ''+contents[i][j].date+'</td>';
-  //     text += '</tr>';
-  //   }
-  //   if(contents[i].length==0){
-  //     text +='<tr>'+'<td>No predicted location</td>'+'</tr>';
-  //   }
-  // }
-  
-
-  if(timeGroups.length==0){
+ if(timeGroups.length==0){
    text ='<tr>'+
-   '<td">No predicted location</td>'+
+   '<td>No predicted location</td>'+
    '</tr>';
  }  
 
