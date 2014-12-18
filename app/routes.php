@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'OverallController@showAllUsers');
+Route::get('/', 'OverallController@showAllPredictedLocation');
 
 Route::post('/addUser', 'OverallController@addUser');
 

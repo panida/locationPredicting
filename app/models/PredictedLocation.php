@@ -35,4 +35,8 @@ class PredictedLocation extends Eloquent{
 			$location->save();
 		}
 	}
+
+	public static function getAllPredictedLocation(){
+		return DB::table('predictedLocation')->orderBy('dateTime','asc')->get();
+	}
 }

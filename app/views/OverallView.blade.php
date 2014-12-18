@@ -19,10 +19,10 @@
  var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
 
  var contents = new Array();
- var predictedLocationClient = new Array();
+ // var predictedLocationClient = new Array();
 
  var users=new Array();
- var user=0;
+ var user="";
 
  var markers = [];
  var specificMarkers =[];
@@ -33,18 +33,14 @@ var map;
 var showPredictedLocation = true;
 var sendNotification = false;
 var dateTime;
-var userNumber=0;
 var searchLocation=true;
 var rectangle;
+var timeGroups = new Array();
 
 function initialize() {
   dateTime = new Date();
   prepareData();
-  contents = predictedLocationClient;
-  
-  for(var i=0;i<users.length;i++){
-    markers.push([]);
-  }
+  // contents = predictedLocationClient;
   var mapOptions = {
     zoom: 12,
     center: tokyo,
@@ -102,26 +98,12 @@ function initialize() {
   });
   var resultHTML = prepareContentHTML();
   document.getElementById('locationContents').innerHTML = resultHTML;
-  drop();
+  showMarkers();
 }
 
 function prepareData(){
-  @foreach($users as $user){
-    users.push('{{$user->name}}');
-  }
-  @endforeach
-
-  var iterator=0;
-  
-  @foreach($predictedLocations as $locations){
-    predictedLocationClient.push([]);
-    
-    @foreach($locations as $location){
-      var temp = { 'date':'{{$location->dateTime}}', 'latitude':{{$location->latitude}}, 'longitude':{{$location->longitude}} };
-      predictedLocationClient[iterator].push(temp);
-    }
-    @endforeach
-    iterator++;
+  @foreach($timeGroups as $time){
+    timeGroups.push({{json_encode($time,JSON_PRETTY_PRINT)}});
   }
   @endforeach
 }
@@ -146,20 +128,21 @@ function showNewRect(event) {
   document.getElementById('selectedUsers').innerHTML = member; 
 
 }
-function drop(){
-  for(var i=0;i<users.length;i++){
-    user=i;
-    for (var j = 0; j < predictedLocationClient[i].length; j++) {
-      addMarker();
-    }
-    iterator=0;
-  }
-  if(markers.length!=0){
-    // map.panTo(markers[0][0].getPosition());
-  }
-}
+// function drop(){
+//   for(var i=0;i<users.length;i++){
+//     user=i;
+//     for (var j = 0; j < predictedLocationClient[i].length; j++) {
+//       addMarker();
+//     }
+//     iterator=0;
+//   }
+//   if(markers.length!=0){
+//     // map.panTo(markers[0][0].getPosition());
+//   }
+// }
 
 function showMarkers(){
+
   document.getElementById('predictPanel').hidden=false; 
   document.getElementById('addPanel').hidden=true; 
   document.getElementById('btnSendNoti').hidden=true; 
@@ -171,61 +154,73 @@ function showMarkers(){
     rectangle.setMap(null);   
   }
   sendNotification=false;
-  clearMarkers();
-  markers=[];
-  for(var i=0;i<users.length;i++){
-    markers.push([]);
-  }
-  drop();
+  clearAllMarkers();
+
+  for(var i=0;i<timeGroups.length;i++){
+//     console.log(timeGroups[i].length);
+for(var j=0;j<timeGroups[i].users.length;j++){
+  addMarker(timeGroups[i].users[j]);
+  console.log("add");
+}
+}
+if(markers.length!=0){
+ console.log(markers[0].getPosition());
+ map.panTo(markers[0].getPosition()); 
+}
 }
 
-function addMarker() {
-  if(contents[user][iterator]!=null){
-   var tlocation = new google.maps.LatLng(contents[user][iterator].latitude, contents[user][iterator].longitude);
-   markers[user].push(new google.maps.Marker({
-    position: tlocation,
-    map: map,
-    draggable: false,
-  }));
-   var content = contents[user][iterator].date;
-   var marker = markers[user][iterator];
-   var username = users[user];
-   google.maps.event.addListener(marker, 'click', function() {
-    setInfoWindow(content,username);
-    infowindow.open(map,marker);
-  });  
-   iterator++;
- }
- 
+function addMarker(userInfo) {
+ var location = new google.maps.LatLng(userInfo.latitude, userInfo.longitude);
+ var content = userInfo.dateTime;
+ var marker = new google.maps.Marker({
+  position: location,
+  map: map,
+  draggable: false
+});
+ markers.push(marker);
+ var username = userInfo.username;
+ google.maps.event.addListener(marker, 'click', function() {
+  setInfoWindow(content,username);
+  infowindow.open(map,marker);
+});
 }
 
 function showSpecificMarkers(row){
   document.getElementById('btnSendNoti').hidden=false; 
-  clearMarkers();
-  for(var i=0;i<users.length;i++){
-    user=i;
-    addSpecificMarkers(row);
+  clearAllMarkers();
+  for(var i=0;i<timeGroups[row].users.length;i++){
+    addSpecificMarkers(timeGroups[row].users[i]);
   }
   map.panTo(specificMarkers[0].getPosition());
 }
 
-function addSpecificMarkers(row){
-  if(contents[user][row]!=null){
-    var tlocation = new google.maps.LatLng(contents[user][row].latitude, contents[user][row].longitude);
-  specificMarkers.push(new google.maps.Marker({
-    position: tlocation,
-    map: map,
-    draggable: false,
-  }));
-  var content = contents[user][row].date;
-  var marker = specificMarkers[user];
-  var username = users[user];
-  google.maps.event.addListener(marker, 'click', function() {
-    setInfoWindow(content,username);
-    infowindow.open(map,marker);
-  });  
-  }
-  
+function addSpecificMarkers(userInfo){
+    // var tlocation = new google.maps.LatLng(contents[user][row].latitude, contents[user][row].longitude);
+    // specificMarkers.push(new google.maps.Marker({
+    //   position: tlocation,
+    //   map: map,
+    //   draggable: false,
+    // }));
+    // var content = contents[user][row].date;
+    // var marker = specificMarkers[user];
+    // var username = users[user];
+    // google.maps.event.addListener(marker, 'click', function() {
+    //   setInfoWindow(content,username);
+    //   infowindow.open(map,marker);
+    // });  
+var location = new google.maps.LatLng(userInfo.latitude, userInfo.longitude);
+var content = userInfo.dateTime;
+var marker = new google.maps.Marker({
+  position: location,
+  map: map,
+  draggable: false
+});
+specificMarkers.push(marker);
+var username = userInfo.username;
+google.maps.event.addListener(marker, 'click', function() {
+  setInfoWindow(content,username);
+  infowindow.open(map,marker);
+});  
 }
 
 function setInfoWindow(content,username){
@@ -240,15 +235,12 @@ function setInfoWindow(content,username){
   });   
 }
 
-function setAllMap(map) {
+
+function clearAllMarkers() {
   for(var i=0;i<markers.length;i++){
-    for (var j = 0; j < markers[i].length; j++) {
-      markers[i][j].setMap(map);
-    }  
+    markers[i].setMap(null);
   }
-}
-function clearMarkers() {
-  setAllMap(null);
+  markers=[];
   for(var i=0;i<specificMarkers.length;i++){
     specificMarkers[i].setMap(null);
   }
@@ -265,14 +257,20 @@ function clearMarkers() {
 //   }
 // }
 function prepareContentHTML(){
-  var text="'<tbody>'";
-  if(contents.length!=0){
-  // dateTime = new Date();
-  // var time=dateTime.getTime();
-  if(contents[0].length!=0){
-    text ='<tr>'+
-    '<td onclick="showMarkers()">All</td>'+
-    '</tr>';
+  var text='<tbody>';
+  for(var i=0;i<timeGroups.length;i++){
+   text += '<tr>';
+   text += '<td onclick="showSpecificMarkers('+i+')">';
+   text += ''+timeGroups[i].dateTime+'</td>';
+   text += '</tr>';
+ }
+  // if(contents.length!=0){
+  // // dateTime = new Date();
+  // // var time=dateTime.getTime();
+  // if(contents[0].length!=0){
+  //   text ='<tr>'+
+  //   '<td onclick="showMarkers()">All</td>'+
+  //   '</tr>';
  //  console.log(contents[0].length);
  //  for(var i=0;i<24;i++){
  //   text += '<tr>';
@@ -283,24 +281,23 @@ function prepareContentHTML(){
  //   dateTime.setHours(dateTime.getHours()+1);
  // }
 
- console.log(contents[0].length);
- for(var i=0;i<contents[0].length;i++){
-   text += '<tr>';
-   text += '<td onclick="showSpecificMarkers('+i+')">';
-   text += ''+contents[0][i].date+'</td>';
-   text += '</tr>';
- }
-}
-else{
- text ='<tr>'+
- '<td">No predicted location</td>'+
- '</tr>';
-}
+
+ // for(var i=0;i<contents[0].length;i++){
+ //   text += '<tr>';
+ //   text += '<td onclick="showSpecificMarkers('+i+')">';
+ //   text += ''+contents[0][i].date+'</td>';
+ //   text += '</tr>';
+ // }
+ 
+ if(timeGroups.length==0){
+   text ='<tr>'+
+   '<td">No predicted location</td>'+
+   '</tr>';
+ }  
 
 
-text += '</tbody>';
-}
-return text;
+ text += '</tbody>';
+ return text;
 }
 // function addZero(i) {
 //     if (i < 10) {
@@ -394,7 +391,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
   <div id="predictPanel" class="col-sm-4 col-md-2">
     <div class="row">
       <div class="col-sm-8">
-       <h3>{{count($users)}} Users</h3>
+       <h3>{{$usersCount}} Users</h3>
      </div>
      <div class="col-sm-4">
       <h3>
