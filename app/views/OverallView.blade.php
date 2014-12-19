@@ -13,22 +13,19 @@
  <script type="text/javascript">
  var tokyo = new google.maps.LatLng(35.66919, 139.7413805);
 
- var contents = new Array();
- var users=new Array();
- var markers = [];
- var specificMarkers =[];
- var iterator = 0;
+ var specificUsers=new Array();
+ var markers = new Array();
+ var markersUsers=new Array();
+ var specificMarkers =new Array();
  var infowindow = null;
  var map;
  var showPredictedLocation = true;
  var sendNotification = false;
- var dateTime;
  var searchLocation=true;
  var rectangle;
  var timeGroups = new Array();
 
  function initialize() {
-  dateTime = new Date();
   prepareData();
   // contents = predictedLocationClient;
   var mapOptions = {
@@ -112,28 +109,37 @@ function showNewRect(event) {
   var sw = rectangle.getBounds().getSouthWest();
   var member="";
   for(var i=0;i<specificMarkers.length;i++){
-
     var isInRect = specificMarkers[i].getPosition().lat()<=ne.lat()&&
     specificMarkers[i].getPosition().lat()>=sw.lat()&&
     specificMarkers[i].getPosition().lng()<=ne.lng()&&
     specificMarkers[i].getPosition().lng()>=sw.lng();
     if(isInRect){
       if(member!=""){
-        member+=", ";
+        member+=",";
       }
-      member+=users[i];
+      member+=specificUsers[i];
     }
   }
+  for(var i=0;i<markers.length;i++){
+    var isInRect = markers[i].getPosition().lat()<=ne.lat()&&
+    markers[i].getPosition().lat()>=sw.lat()&&
+    markers[i].getPosition().lng()<=ne.lng()&&
+    markers[i].getPosition().lng()>=sw.lng();
+    if(isInRect){
+      if(member!=""){
+        member+=",";
+      }
+      member+=markersUsers[i];
+    }
+  }
+  arr =  $.unique(member.split(','));
+  member = arr.join(",");
   document.getElementById('selectedUsers').innerHTML = member; 
-
 }
 
 function showMarkers(){
-
   document.getElementById('predictPanel').hidden=false; 
   document.getElementById('addPanel').hidden=true; 
-  document.getElementById('btnSendNoti').hidden=true; 
-
   document.getElementById('sendNotiPanel').hidden=true;
   var resultHTML = prepareContentHTML();
   document.getElementById('locationContents').innerHTML = resultHTML;
@@ -142,10 +148,10 @@ function showMarkers(){
   }
   sendNotification=false;
   clearAllMarkers();
-
   for(var i=0;i<timeGroups.length;i++){
     for(var j=0;j<timeGroups[i].users.length;j++){
       addMarker(timeGroups[i].users[j]);
+      markersUsers.push(timeGroups[i].users[j].username);
     }
   }
   if(markers.length!=0){
@@ -170,11 +176,10 @@ function addMarker(userInfo) {
 }
 
 function showSpecificMarkers(row){
-  document.getElementById('btnSendNoti').hidden=false; 
   clearAllMarkers();
   for(var i=0;i<timeGroups[row].users.length;i++){
     addSpecificMarkers(timeGroups[row].users[i]);
-    users.push(timeGroups[row].users[i].username);
+    specificUsers.push(timeGroups[row].users[i].username);
   }
   map.panTo(specificMarkers[0].getPosition());
 }
@@ -213,69 +218,83 @@ function clearAllMarkers() {
     markers[i].setMap(null);
   }
   markers=[];
+  markersUsers=[];
   for(var i=0;i<specificMarkers.length;i++){
     specificMarkers[i].setMap(null);
   }
   specificMarkers =[];
-  users=[];
+  specificUsers=[];
 }
 
 function prepareContentHTML(){
   var text='<tbody>';
-  for(var i=0;i<timeGroups.length;i++){
-   text += '<tr>';
-   text += '<td onclick="showSpecificMarkers('+i+')">';
-   text += ''+timeGroups[i].dateTime+'</td>';
-   text += '</tr>';
- }
- if(timeGroups.length==0){
+  if(timeGroups.length==0){
    text ='<tr>'+
    '<td>No predicted location</td>'+
-   '</tr>';
+   '</tr>'+
+   '<tbody>';
+   return text;
  }  
+ text += 
+ '<tr>'+
+ '<td onclick="showMarkers();">'+
+ 'All'+
+ '</td>'+
+ '</tr>';
+ for(var i=0;i<timeGroups.length;i++){
+   text += 
+   '<tr>'+
+   '<td onclick="showSpecificMarkers('+i+')">'+
+        // '<div class="checkbox">'+
+          // '<label>'+
+            // '<input type="checkbox">'+
+            timeGroups[i].dateTime+
+          // '</label>'+
+        // '</div>'+
+        '</td>'+
+        '</tr>';
+      }
+      text += '</tbody>';
+      return text;
+    }
 
- text += '</tbody>';
- return text;
-}
+    function addUser(){
+      document.getElementById('predictPanel').hidden=true;  
+      document.getElementById('addPanel').hidden=false;
+    }
 
-function addUser(){
-  document.getElementById('predictPanel').hidden=true;  
-  document.getElementById('addPanel').hidden=false;
-}
+    function cancel(){
+      document.getElementById('predictPanel').hidden=false;  
+      document.getElementById('addPanel').hidden=true;
+    }
 
-function cancel(){
-  console.log("cancel");
-  document.getElementById('predictPanel').hidden=false;  
-  document.getElementById('addPanel').hidden=true;
-}
+    function switchSearch(){
+      if(searchLocation){
+        searchLocation=false;
+        document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-user");
+        document.getElementById('searchLocation').hidden=true;
+        document.getElementById('searchUser').hidden=false;
 
-function switchSearch(){
-  if(searchLocation){
-    searchLocation=false;
-    document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-user");
-    document.getElementById('searchLocation').hidden=true;
-    document.getElementById('searchUser').hidden=false;
+      }else{
+        searchLocation=true;
+        document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-globe");
+        document.getElementById('searchLocation').hidden=false;
+        document.getElementById('searchUser').hidden=true;
+      }
+    }
 
-  }else{
-    searchLocation=true;
-    document.getElementById('searchIcon').setAttribute("class","glyphicon glyphicon-globe");
-    document.getElementById('searchLocation').hidden=false;
-    document.getElementById('searchUser').hidden=true;
-  }
-}
+    function sendNoti(){
+      if(sendNotification){
+        rectangle.setMap(null); 
+        document.getElementById('sendNotiPanel').hidden=true; 
+        sendNotification=false;
 
-function sendNoti(){
-  if(sendNotification){
-    rectangle.setMap(null); 
-    document.getElementById('sendNotiPanel').hidden=true; 
-    sendNotification=false;
-
-  }else {
-    document.getElementById('sendNotiPanel').hidden=false; 
-    var bounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(map.getCenter().lat()-0.01, map.getCenter().lng()-0.02),
-      new google.maps.LatLng(map.getCenter().lat()+0.01, map.getCenter().lng()+0.02)
-      );
+      }else {
+        document.getElementById('sendNotiPanel').hidden=false; 
+        var bounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(map.getCenter().lat()-0.01, map.getCenter().lng()-0.02),
+          new google.maps.LatLng(map.getCenter().lat()+0.01, map.getCenter().lng()+0.02)
+          );
   // Define the rectangle and set its editable property to true.
   rectangle = new google.maps.Rectangle({
     bounds: bounds,
@@ -285,14 +304,13 @@ function sendNoti(){
 
   rectangle.setMap(map);
 
-  // Add an event listener on the rectangle.
-  google.maps.event.addListener(rectangle, 'bounds_changed', showNewRect);
+    // Add an event listener on the rectangle.
+    google.maps.event.addListener(rectangle, 'bounds_changed', showNewRect);
 
-  // Define an info window on the map.
-  infoWindow = new google.maps.InfoWindow();
-  sendNotification = true;
-}
-
+    // Define an info window on the map.
+    infoWindow = new google.maps.InfoWindow();
+    sendNotification = true;
+  }
 }
 
 
@@ -327,17 +345,17 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
   <div id="predictPanel" class="col-sm-4 col-md-2">
     <div class="row">
-      <div class="col-sm-9">
+      <div class="col-sm-8">
         @if (count($users) <= 1)
         <h3>{{count($users)}} User</h3>
         @else
         <h3>{{count($users)}} Users</h3>
         @endif
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-4">
         <h3>
          <button type="button" class="icon" onclick="addUser()" data-toggle="tooltip" data-placement="top" title="Add new user"><span class="glyphicon glyphicon-plus-sign"></span></button>
-         <button type="button" class="icon" onclick="sendNoti()" data-toggle="tooltip" data-placement="top" title="Push notification" hidden="true" id="btnSendNoti"><span class="glyphicon glyphicon-phone"></span></button>
+         <button type="button" class="icon" onclick="sendNoti()" data-toggle="tooltip" data-placement="top" title="Push notification" id="btnSendNoti"><span class="glyphicon glyphicon-phone"></span></button>
        </h3>
      </div>
    </div><!-- /.row -->
@@ -365,9 +383,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
 </div><!--/addPanel -->
 
 <div id="sendNotiPanel" class="col-sm-4 col-md-2" hidden="true">
- <h4>Send Notification</h4>
- <hr>
- <!-- <form role="form"> -->
+ <h4>Push Notification</h4>
  <label for="selectedUsers">Selected Users</label>
  <div id="selectedUsersPanel">
   <p id="selectedUsers">
@@ -377,7 +393,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
     <textarea type="text" id="exampleInputFile" class="form-control" placeholder="Message"></textarea>
   </div>
   <button type="submit" class="btn btn-primary">Send</button>
-  <!-- </form> -->
 </div><!--/addPanel -->
 
 <div id="map-canvas"></div>

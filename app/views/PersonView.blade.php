@@ -247,7 +247,7 @@ function cancel(){
     <h3>
       <a href="{{URL::to('/')}}" type="button" class="icon" data-placement="top" title="Back to view all users' predicted location"><span class="glyphicon glyphicon-home"></span></a>
       <button type="button" class="icon" onclick="addData()" data-toggle="tooltip" data-placement="top" title="Add more location information"><span class="glyphicon glyphicon-plus"></span></button>
-      <button type="button" class="icon" data-toggle="modal" data-target="#confirm-delete" data-placement="top" title="Delete this user's location information"><span class="glyphicon glyphicon-trash"></span></button>
+      <button type="button" class="icon" data-toggle="modal" data-target="#confirm-delete" data-placement="top" title="Delete this user"><span class="glyphicon glyphicon-trash"></span></button>
     </h3>
   </div>
 </div><!-- /.row -->
@@ -257,7 +257,7 @@ function cancel(){
   </div>
   <div class="col-sm-2 nopadding">
     <h4>
-      <button type="button" class="icon" onclick="swap()" data-toggle="tooltip" data-placement="right" title="Switch to Location Log"><span class="glyphicon glyphicon-retweet"></span></button>
+      <button type="button" class="icon" onclick="swap()" data-toggle="tooltip" data-placement="right" title="Switch to location log"><span class="glyphicon glyphicon-retweet"></span></button>
     </h4>
   </div>
 </div>
