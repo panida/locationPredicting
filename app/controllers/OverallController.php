@@ -25,7 +25,7 @@ class OverallController extends Controller {
 		$rows = array();
 		$users = Person::getAllUsers();
 		if(count($predictedLocations)>0){
-			$tdateTime = $predictedLocations[0]->dateTime;
+			$tdateTime = date("Y/m/d H",strtotime($predictedLocations[0]->dateTime)).":00:00";
 			$init = (object) ['dateTime' => $tdateTime,'users' => array()];
 			array_push($rows,$init);
 			foreach ($predictedLocations as $predictedLocation) {
@@ -41,7 +41,7 @@ class OverallController extends Controller {
 					array_push($rows[key($rows)]->users,$userInfo);
 				}
 				else{
-					$tdateTime = $predictedLocation->dateTime;
+					$tdateTime = date("Y/m/d H",strtotime($predictedLocation->dateTime)).":00:00";
 					$temp = (object) ['dateTime' => $tdateTime,'users' => array()];
 					array_push($temp->users,$userInfo);
 					array_push($rows,$temp);	
